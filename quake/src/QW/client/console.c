@@ -32,7 +32,7 @@ int			con_totallines;		// total lines in console scrollback
 float		con_cursorspeed = 4;
 
 
-cvar_t		con_notifytime = {"con_notifytime","3"};		//seconds
+cvar_t		con_notifytime = CVAR2("con_notifytime","3");		//seconds
 
 #define	NUM_CON_TIMES 4
 float		con_times[NUM_CON_TIMES];	// realtime time the line was generated
@@ -514,7 +514,7 @@ void Con_DrawNotify (void)
 		}
 
 		s = chat_buffer;
-		if (chat_bufferlen > (vid.width>>3)-(skip+1))
+		if (chat_bufferlen > (int) ((vid.width>>3)-(skip+1)))
 			s += chat_bufferlen - ((vid.width>>3)-(skip+1));
 		x = 0;
 		while(s[x])
@@ -595,7 +595,7 @@ void Con_DrawConsole (int lines)
 		x = con_linewidth - ((con_linewidth * 7) / 40);
 		y = x - strlen(text) - 8;
 		i = con_linewidth/3;
-		if (strlen(text) > i) {
+		if ((int) strlen(text) > i) {
 			y = x - i - 11;
 			strncpy(dlbar, text, i);
 			dlbar[i] = 0;
@@ -623,7 +623,7 @@ void Con_DrawConsole (int lines)
 
 		// draw it
 		y = con_vislines-22 + 8;
-		for (i = 0; i < strlen(dlbar); i++)
+		for (i = 0; i < (int) strlen(dlbar); i++)
 			Draw_Character ( (i+1)<<3, y, dlbar[i]);
 	}
 

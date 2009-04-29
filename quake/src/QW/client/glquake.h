@@ -19,20 +19,33 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // disable data conversion warnings
 
+#ifdef _WIN32
 #pragma warning(disable : 4244)     // MIPS
 #pragma warning(disable : 4136)     // X86
 #pragma warning(disable : 4051)     // ALPHA
+#endif
   
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
+#ifdef USE_OPENGLES
+
+#include <GLES/gl.h>
+
+#else
+
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+#endif
 
 void GL_BeginRendering (int *x, int *y, int *width, int *height);
 void GL_EndRendering (void);
 
+#ifdef USE_OPENGLES
+
+#else // full OpenGL
 
 // Function prototypes for the Texture Object Extension routines
 typedef GLboolean (APIENTRY *ARETEXRESFUNCPTR)(GLsizei, const GLuint *,
@@ -49,6 +62,8 @@ extern	BINDTEXFUNCPTR bindTexFunc;
 extern	DELTEXFUNCPTR delTexFunc;
 extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
 
+#endif // USE_OPENGLES
+
 extern	int texture_extension_number;
 extern	int		texture_mode;
 
@@ -59,6 +74,16 @@ void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean a
 void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
 int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha);
 int GL_FindTexture (char *identifier);
+
+void glTexImage2DHelper( GLenum target,
+	 GLint level,
+	 GLint internalformat,
+	 GLsizei width,
+	 GLsizei height,
+	 GLint border,
+	 GLenum format,
+	 GLenum type,
+	 const GLvoid *pixels );
 
 typedef struct
 {

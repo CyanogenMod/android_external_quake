@@ -738,7 +738,7 @@ void M_Keys_Draw (void)
 		M_Print (18, 32, "Enter to change, backspace to clear");
 		
 // search for known bindings
-	for (i=0 ; i<NUMCOMMANDS ; i++)
+	for (i=0 ; i< (int) NUMCOMMANDS ; i++)
 	{
 		y = 48 + 8*i;
 
@@ -812,7 +812,7 @@ void M_Keys_Key (int k)
 	case K_RIGHTARROW:
 		S_LocalSound ("misc/menu1.wav");
 		keys_cursor++;
-		if (keys_cursor >= NUMCOMMANDS)
+		if (keys_cursor >= (int) NUMCOMMANDS)
 			keys_cursor = 0;
 		break;
 
@@ -1017,7 +1017,7 @@ void M_SinglePlayer_Draw (void) {
 
 }
 
-void M_SinglePlayer_Key (key) {
+void M_SinglePlayer_Key (int key) {
 	if (key == K_ESCAPE || key==K_ENTER)
 		m_state = m_main;
 }
@@ -1045,7 +1045,7 @@ void M_MultiPlayer_Draw (void) {
 	M_PrintWhite (72, 16*8, "        started!        ");
 }
 
-void M_MultiPlayer_Key (key) {
+void M_MultiPlayer_Key (int key) {
 	if (key == K_ESCAPE || key==K_ENTER)
 		m_state = m_main;
 }

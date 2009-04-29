@@ -461,13 +461,23 @@ void R_DrawParticles (void)
 	qboolean		alphaTestEnabled;
     
 	GL_Bind(particletexture);
+#ifdef USE_OPENGLES
+	// !!! Implement this
+	alphaTestEnabled = false;
+#else
 	alphaTestEnabled = glIsEnabled(GL_ALPHA_TEST);
+#endif
 	
 	if (alphaTestEnabled)
 		glDisable(GL_ALPHA_TEST);
 	glEnable (GL_BLEND);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	
+#ifdef USE_OPENGLES
+	// !!! Implement this
+#else
 	glBegin (GL_TRIANGLES);
+#endif
 
 	VectorScale (vup, 1.5, up);
 	VectorScale (vright, 1.5, right);
@@ -530,6 +540,10 @@ void R_DrawParticles (void)
 //			theAlpha = 255*(8-p->ramp)/8;
 		else
 			theAlpha = 255;
+
+#ifdef USE_OPENGLES
+	// !!! Implement this
+#else
 		glColor4ub (*at, *(at+1), *(at+2), theAlpha);
 //		glColor3ubv (at);
 //		glColor3ubv ((byte *)&d_8to24table[(int)p->color]);
@@ -539,6 +553,7 @@ void R_DrawParticles (void)
 		glVertex3f (p->org[0] + up[0]*scale, p->org[1] + up[1]*scale, p->org[2] + up[2]*scale);
 		glTexCoord2f (0,1);
 		glVertex3f (p->org[0] + right[0]*scale, p->org[1] + right[1]*scale, p->org[2] + right[2]*scale);
+#endif
 
 #else
 		D_DrawParticle (p);
@@ -603,7 +618,11 @@ void R_DrawParticles (void)
 	}
 
 #ifdef GLQUAKE
+#ifdef USE_OPENGLES
+	// !!! Implement this
+#else
 	glEnd ();
+#endif
 	glDisable (GL_BLEND);
 	if (alphaTestEnabled)
 		glEnable(GL_ALPHA_TEST);

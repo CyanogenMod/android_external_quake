@@ -210,6 +210,7 @@ void BuildTris (void)
 	//
 	numorder = 0;
 	numcommands = 0;
+	besttype = 0;
 	memset (used, 0, sizeof(used));
 	for (i=0 ; i<pheader->numtris ; i++)
 	{

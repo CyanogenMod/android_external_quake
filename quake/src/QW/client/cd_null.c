@@ -14,6 +14,10 @@ void CDAudio_Resume(void)
 {
 }
 
+void CDAudio_Pause(void)
+{
+}
+
 
 void CDAudio_Update(void)
 {

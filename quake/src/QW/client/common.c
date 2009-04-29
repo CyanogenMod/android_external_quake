@@ -38,7 +38,7 @@ static char	*argvdummy = " ";
 static char	*safeargvs[NUM_SAFE_ARGVS] =
 	{"-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse"};
 
-cvar_t	registered = {"registered","0"};
+cvar_t	registered = CVAR2("registered","0");
 
 qboolean	com_modified;	// set true if using non-id files
 
@@ -767,7 +767,7 @@ char *MSG_ReadString (void)
 			break;
 		string[l] = c;
 		l++;
-	} while (l < sizeof(string)-1);
+	} while (l < (int) sizeof(string)-1);
 	
 	string[l] = 0;
 	
@@ -787,7 +787,7 @@ char *MSG_ReadStringLine (void)
 			break;
 		string[l] = c;
 		l++;
-	} while (l < sizeof(string)-1);
+	} while (l < (int) sizeof(string)-1);
 	
 	string[l] = 0;
 	
@@ -1120,10 +1120,12 @@ void COM_CheckRegistered (void)
 	if (!h)
 	{
 		Con_Printf ("Playing shareware version.\n");
+#if 0
 #ifndef SERVERONLY
 // FIXME DEBUG -- only temporary
 		if (com_modified)
 			Sys_Error ("You must have the registered version to play QuakeWorld");
+#endif
 #endif
 		return;
 	}
@@ -1450,7 +1452,7 @@ void COM_CopyFile (char *netpath, char *cachepath)
 	
 	while (remaining)
 	{
-		if (remaining < sizeof(buf))
+		if (remaining < (int) sizeof(buf))
 			count = remaining;
 		else
 			count = sizeof(buf);
@@ -2034,7 +2036,7 @@ void Info_SetValueForStarKey (char *s, char *key, char *value, int maxsize)
 	if (*(v = Info_ValueForKey(s, key))) {
 		// key exists, make sure we have enough room for new value, if we don't,
 		// don't change it!
-		if (strlen(value) - strlen(v) + strlen(s) > maxsize) {
+		if ((int) (strlen(value) - strlen(v) + strlen(s)) > maxsize) {
 			Con_Printf ("Info string length exceeded\n");
 			return;
 		}

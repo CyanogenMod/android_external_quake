@@ -32,6 +32,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 //define	PARANOID			// speed sapping error checking
 
+#define GLQUAKE
+#define USE_OPENGLES
+#define id386 0
+
 #ifdef QUAKE2
 #define	GAMENAME	"id1"		// directory to look in by default
 #else
@@ -61,10 +65,12 @@ void	VID_UnlockBuffer (void);
 
 #endif
 
+#if !defined id386
 #if defined __i386__ // && !defined __sun__
 #define id386	1
 #else
 #define id386	0
+#endif
 #endif
 
 #if id386
@@ -270,10 +276,10 @@ typedef struct
 
 typedef struct
 {
-	char	*basedir;
-	char	*cachedir;		// for development over ISDN lines
+	const char	*basedir;
+	const char	*cachedir;		// for development over ISDN lines
 	int		argc;
-	char	**argv;
+	const char	**argv;
 	void	*membase;
 	int		memsize;
 } quakeparms_t;
@@ -308,11 +314,11 @@ void Host_ServerFrame (void);
 void Host_InitCommands (void);
 void Host_Init (quakeparms_t *parms);
 void Host_Shutdown(void);
-void Host_Error (char *error, ...);
-void Host_EndGame (char *message, ...);
+void Host_Error (const char *error, ...);
+void Host_EndGame (const char *message, ...);
 void Host_Frame (float time);
 void Host_Quit_f (void);
-void Host_ClientCommands (char *fmt, ...);
+void Host_ClientCommands (const char *fmt, ...);
 void Host_ShutdownServer (qboolean crash);
 
 extern qboolean		msg_suppress_1;		// suppresses resolution and cache size console output
@@ -333,3 +339,118 @@ extern	cvar_t	chase_active;
 void Chase_Init (void);
 void Chase_Reset (void);
 void Chase_Update (void);
+
+qboolean SV_RecursiveHullCheck (hull_t *hull, int num, float p1f, float p2f, vec3_t p1, vec3_t p2, trace_t *trace);
+
+// Linux versions of msdos CRT functions
+#define stricmp strcasecmp
+
+// Helper functions for OpenGL ES
+void DrawQuad_NoTex(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+void DrawQuad(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat u, GLfloat v, GLfloat uw, GLfloat vh);
+
+void shadowLoadIdentity( GLfloat* m);
+void shadowRotatef( GLfloat* m, GLfloat a, GLfloat x, GLfloat y, GLfloat z);
+void shadowTranslatef( GLfloat* m, GLfloat x, GLfloat y, GLfloat z);
+
+#ifdef USE_OPENGLES
+// Reimplementation of OpenGL functions that are missing in OpenGL ES
+
+#define GL_INTENSITY				0x8049
+
+void glColor3f(GLfloat r, GLfloat g, GLfloat b);
+void glColor4fv(GLfloat* pColor);
+
+#define VERTEXARRAYSIZE 2048
+
+extern float gVertexBuffer[VERTEXARRAYSIZE];
+extern float gColorBuffer[VERTEXARRAYSIZE];
+extern float gTexCoordBuffer[VERTEXARRAYSIZE];
+
+#endif // USE_OPENGLES
+
+void glTexImage2DHelper( GLenum target,
+	 GLint level,
+	 GLint internalformat,
+	 GLsizei width,
+	 GLsizei height,
+	 GLint border,
+	 GLenum format,
+	 GLenum type,
+	 const GLvoid *pixels );
+
+// Forward declarations:
+
+qboolean VID_Is8bit(void);
+void GL_SubdivideSurface (msurface_t *fa);
+void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr);
+int R_LightPoint (vec3_t p);
+void R_DrawBrushModel (entity_t *e);
+void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, float degrees );
+void R_AnimateLight (void);
+void V_CalcBlend (void);
+void R_DrawWorld (void);
+void R_RenderDlights(void);
+void R_DrawParticles (void);
+void R_DrawWaterSurfaces (void);
+void R_RenderBrushPoly (msurface_t *fa);
+void R_InitParticles (void);
+void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
+void R_ClearParticles (void);
+void GL_BuildLightmaps (void);
+void EmitWaterPolys (msurface_t *fa);
+void EmitSkyPolys (msurface_t *fa);
+void EmitBothSkyLayers (msurface_t *fa);
+void R_DrawSkyChain (msurface_t *s);
+qboolean R_CullBox (vec3_t mins, vec3_t maxs);
+void R_MarkLights (dlight_t *light, int bit, mnode_t *node);
+void R_RotateForEntity (entity_t *e);
+void R_StoreEfrags (efrag_t **ppefrag);
+void GL_Set2D (void);
+
+// Poor Man's Profiler
+// (And general loging.)
+
+void PMP_Begin(const char* fmt,...);
+void PMP_Event(const char* fmt,...);
+void PMP_End(const char* fmt,...);
+
+#define PMPLOG(ARGS) PMP_Event ARGS
+#define PMPWARNING(ARGS) PMP_Event ARGS
+#define PMPERROR(ARGS) PMP_Event ARGS
+
+// #define ENABLE_PMP
+
+#ifdef ENABLE_PMP
+
+#define PMPBEGIN(ARGS) PMP_Begin ARGS
+#define PMPEVENT(ARGS) PMP_Event ARGS
+#define PMPEND(ARGS) PMP_End ARGS
+
+#else
+
+#define PMPBEGIN(ARGS) ((void) 0)
+#define PMPEVENT(ARGS) ((void) 0)
+#define PMPEND(ARGS) ((void) 0)
+
+#endif
+
+// Measure fastest / slowest frames
+typedef struct frameTime_ {
+    int frame;
+	float time;
+} frameTime;
+
+extern frameTime fastestFrame;
+extern frameTime slowestFrame;
+
+void InitFrameTimes();
+
+// Feature configuration
+
+#define SUPPORT_8BIT_MIPMAPGENERATION
+
+#ifdef SUPPORT_8BIT_MIPMAPGENERATION
+extern unsigned char d_15to8table[65536];
+#endif // SUPPORT_8BIT_MIPMAPGENERATION
+

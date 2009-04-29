@@ -53,7 +53,7 @@ int			net_send_socket;	// blocking, for sends
 #define	MAX_UDP_PACKET	8192
 byte		net_message_buffer[MAX_UDP_PACKET];
 
-int gethostname (char *, int);
+// int gethostname (char *, int);
 int close (int);
 
 //=============================================================================
@@ -192,7 +192,7 @@ qboolean NET_GetPacket (void)
 {
 	int 	ret;
 	struct sockaddr_in	from;
-	int		fromlen;
+	socklen_t		fromlen;
 
 	fromlen = sizeof(from);
 	ret = recvfrom (net_socket, net_message_buffer, sizeof(net_message_buffer), 0, (struct sockaddr *)&from, &fromlen);
@@ -265,7 +265,7 @@ void NET_GetLocalAddress (void)
 {
 	char	buff[MAXHOSTNAMELEN];
 	struct sockaddr_in	address;
-	int		namelen;
+	socklen_t namelen;
 
 	gethostname(buff, MAXHOSTNAMELEN);
 	buff[MAXHOSTNAMELEN-1] = 0;

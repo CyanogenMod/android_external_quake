@@ -101,7 +101,8 @@ typedef struct
 typedef enum {
 ca_dedicated, 		// a dedicated server with no ability to start a client
 ca_disconnected, 	// full screen console with no connection
-ca_connected		// valid netcon, talking to a server
+ca_connected,		// valid netcon, talking to a server
+cactive_t_max = 1 << 30
 } cactive_t;
 
 //
@@ -293,7 +294,7 @@ void	CL_DecayLights (void);
 
 void CL_Init (void);
 
-void CL_EstablishConnection (char *host);
+void CL_EstablishConnection (const char *host);
 void CL_Signon1 (void);
 void CL_Signon2 (void);
 void CL_Signon3 (void);
@@ -336,7 +337,7 @@ void CL_BaseMove (usercmd_t *cmd);
 
 
 float CL_KeyState (kbutton_t *key);
-char *Key_KeynumToString (int keynum);
+const char *Key_KeynumToString (int keynum);
 
 //
 // cl_demo.c

@@ -36,7 +36,7 @@ cmdalias_t	*cmd_alias;
 
 qboolean	cmd_wait;
 
-cvar_t cl_warncmd = {"cl_warncmd", "0"};
+cvar_t cl_warncmd = CVAR2("cl_warncmd", "0");
 
 //=============================================================================
 
@@ -158,7 +158,7 @@ void Cbuf_Execute (void)
 				quotes++;
 			if ( !(quotes&1) &&  text[i] == ';')
 				break;	// don't break if inside a quoted string
-			if (text[i] == '\n')
+			if (text[i] == '\n' || text[i] == '\r')
 				break;
 		}
 			

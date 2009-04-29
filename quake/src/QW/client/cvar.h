@@ -63,6 +63,11 @@ typedef struct cvar_s
 	struct cvar_s *next;
 } cvar_t;
 
+// Helper macro to avoid missing initializer warnings 
+#define CVAR2(NAME, STRING) {(NAME),(STRING), 0, 0, 0.0f, (struct cvar_s*) 0}
+#define CVAR3(NAME, STRING, ARCHIVE) {(NAME), (STRING), (ARCHIVE), 0, 0.0f, (struct cvar_s*) 0}
+#define CVAR4(NAME, STRING, ARCHIVE, INFO) {(NAME), (STRING), (ARCHIVE), (INFO), 0.0f, (struct cvar_s*) 0}
+
 void 	Cvar_RegisterVariable (cvar_t *variable);
 // registers a cvar that allready has the name, string, and optionally the
 // archive elements set.

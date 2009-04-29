@@ -73,31 +73,31 @@ int		d_lightstylevalue[256];	// 8.8 fraction of base light value
 
 void R_MarkLeaves (void);
 
-cvar_t	r_norefresh = {"r_norefresh","0"};
-cvar_t	r_drawentities = {"r_drawentities","1"};
-cvar_t	r_drawviewmodel = {"r_drawviewmodel","1"};
-cvar_t	r_speeds = {"r_speeds","0"};
-cvar_t	r_fullbright = {"r_fullbright","0"};
-cvar_t	r_lightmap = {"r_lightmap","0"};
-cvar_t	r_shadows = {"r_shadows","0"};
-cvar_t	r_mirroralpha = {"r_mirroralpha","1"};
-cvar_t	r_wateralpha = {"r_wateralpha","1"};
-cvar_t	r_dynamic = {"r_dynamic","1"};
-cvar_t	r_novis = {"r_novis","0"};
-cvar_t	r_netgraph = {"r_netgraph","0"};
+cvar_t	r_norefresh = CVAR2("r_norefresh","0");
+cvar_t	r_drawentities = CVAR2("r_drawentities","1");
+cvar_t	r_drawviewmodel = CVAR2("r_drawviewmodel","1");
+cvar_t	r_speeds = CVAR2("r_speeds","0");
+cvar_t	r_fullbright = CVAR2("r_fullbright","0");
+cvar_t	r_lightmap = CVAR2("r_lightmap","0");
+cvar_t	r_shadows = CVAR2("r_shadows","0");
+cvar_t	r_mirroralpha = CVAR2("r_mirroralpha","1");
+cvar_t	r_wateralpha = CVAR2("r_wateralpha","1");
+cvar_t	r_dynamic = CVAR2("r_dynamic","1");
+cvar_t	r_novis = CVAR2("r_novis","0");
+cvar_t	r_netgraph = CVAR2("r_netgraph","0");
 
-cvar_t	gl_clear = {"gl_clear","0"};
-cvar_t	gl_cull = {"gl_cull","1"};
-cvar_t	gl_texsort = {"gl_texsort","1"};
-cvar_t	gl_smoothmodels = {"gl_smoothmodels","1"};
-cvar_t	gl_affinemodels = {"gl_affinemodels","0"};
-cvar_t	gl_polyblend = {"gl_polyblend","1"};
-cvar_t	gl_flashblend = {"gl_flashblend","1"};
-cvar_t	gl_playermip = {"gl_playermip","0"};
-cvar_t	gl_nocolors = {"gl_nocolors","0"};
-cvar_t	gl_keeptjunctions = {"gl_keeptjunctions","1"};
-cvar_t	gl_reporttjunctions = {"gl_reporttjunctions","0"};
-cvar_t	gl_finish = {"gl_finish","0"};
+cvar_t	gl_clear = CVAR2("gl_clear","0");
+cvar_t	gl_cull = CVAR2("gl_cull","1");
+cvar_t	gl_texsort = CVAR2("gl_texsort","1");
+cvar_t	gl_smoothmodels = CVAR2("gl_smoothmodels","1");
+cvar_t	gl_affinemodels = CVAR2("gl_affinemodels","0");
+cvar_t	gl_polyblend = CVAR2("gl_polyblend","1");
+cvar_t	gl_flashblend = CVAR2("gl_flashblend","1");
+cvar_t	gl_playermip = CVAR2("gl_playermip","0");
+cvar_t	gl_nocolors = CVAR2("gl_nocolors","0");
+cvar_t	gl_keeptjunctions = CVAR2("gl_keeptjunctions","1");
+cvar_t	gl_reporttjunctions = CVAR2("gl_reporttjunctions","0");
+cvar_t	gl_finish = CVAR2("gl_finish","0");
 
 extern	cvar_t	gl_ztrick;
 extern	cvar_t	scr_fov;
@@ -227,9 +227,11 @@ void R_DrawSpriteModel (entity_t *e)
     GL_Bind(frame->gl_texturenum);
 
 	glEnable (GL_ALPHA_TEST);
-	glBegin (GL_QUADS);
 
-	glEnable (GL_ALPHA_TEST);
+#ifdef USE_OPENGLES
+	// !!! Need to implement this !!!
+	
+#else
 	glBegin (GL_QUADS);
 
 	glTexCoord2f (0, 1);
@@ -253,6 +255,7 @@ void R_DrawSpriteModel (entity_t *e)
 	glVertex3fv (point);
 	
 	glEnd ();
+#endif
 
 	glDisable (GL_ALPHA_TEST);
 }
@@ -309,6 +312,51 @@ lastposenum = posenum;
 		count = *order++;
 		if (!count)
 			break;		// done
+			
+#ifdef USE_OPENGLES
+		{
+			int primType;
+			float color[3*256];
+			float vertex[3*256];
+			int c;
+			float* pColor;
+			float* pVertex;
+			
+			if (count < 0)
+			{
+				count = -count;
+				primType = GL_TRIANGLE_FAN;
+			}
+			else
+				primType = GL_TRIANGLE_STRIP;
+			
+			// texture coordinates come from the draw list
+			glTexCoordPointer(2, GL_FLOAT, 0, order);
+		
+			pColor = color;
+			pVertex = vertex;
+			for(c = 0; c < count; c++)
+			{
+				// normals and vertexes come from the frame list
+				l = shadedots[verts->lightnormalindex] * shadelight;
+				*pColor++ = l;
+				*pColor++ = l;
+				*pColor++ = l;
+				*pVertex++ = verts->v[0];
+				*pVertex++ = verts->v[1];
+				*pVertex++ = verts->v[2];
+				verts++;
+			}
+			
+			glColorPointer(3, GL_FLOAT, 0, color);
+			glVertexPointer(3, GL_FLOAT, 0, vertex);
+						
+			glDrawArrays(primType, 0, count);
+			
+			order += 2 * count;
+		}
+
+#else
 		if (count < 0)
 		{
 			count = -count;
@@ -331,6 +379,7 @@ lastposenum = posenum;
 		} while (--count);
 
 		glEnd ();
+#endif
 	}
 }
 
@@ -365,6 +414,13 @@ void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 		count = *order++;
 		if (!count)
 			break;		// done
+			
+#ifdef USE_OPENGLES
+
+		// !!! Implement this (based on GL_DrawAlias)
+		break;
+#else
+
 		if (count < 0)
 		{
 			count = -count;
@@ -394,6 +450,9 @@ void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 		} while (--count);
 
 		glEnd ();
+		
+#endif
+
 	}	
 }
 
@@ -698,9 +757,15 @@ void R_DrawViewModel (void)
 	diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = (float)shadelight / 128;
 
 	// hack the depth range to prevent view model from poking into walls
+#ifdef USE_OPENGLES
+	glDepthRangef(gldepthmin, gldepthmin + 0.3f*(gldepthmax-gldepthmin));
+	R_DrawAliasModel (currententity);
+	glDepthRangef(gldepthmin, gldepthmax);
+#else
 	glDepthRange (gldepthmin, gldepthmin + 0.3*(gldepthmax-gldepthmin));
 	R_DrawAliasModel (currententity);
 	glDepthRange (gldepthmin, gldepthmax);
+#endif
 }
 
 
@@ -732,6 +797,9 @@ void R_PolyBlend (void)
 
 	glColor4fv (v_blend);
 
+#ifdef USE_OPENGLES
+	// !!! Implement this
+#else
 	glBegin (GL_QUADS);
 
 	glVertex3f (10, 100, 100);
@@ -739,6 +807,7 @@ void R_PolyBlend (void)
 	glVertex3f (10, -100, -100);
 	glVertex3f (10, 100, -100);
 	glEnd ();
+#endif
 
 	glDisable (GL_BLEND);
 	glEnable (GL_TEXTURE_2D);
@@ -835,6 +904,23 @@ void R_SetupFrame (void)
 
 }
 
+#ifdef USE_OPENGLES
+
+void MYgluPerspective( float fovy, float aspect,
+		     float zNear, float zFar )
+{
+   float xmin, xmax, ymin, ymax;
+
+   ymax = zNear * tan( fovy * M_PI / 360.0f );
+   ymin = -ymax;
+
+   xmin = ymin * aspect;
+   xmax = ymax * aspect;
+
+   glFrustumf( xmin, xmax, ymin, ymax, zNear, zFar );
+}
+
+#else
 
 void MYgluPerspective( GLdouble fovy, GLdouble aspect,
 		     GLdouble zNear, GLdouble zFar )
@@ -849,7 +935,7 @@ void MYgluPerspective( GLdouble fovy, GLdouble aspect,
 
    glFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
 }
-
+#endif
 
 /*
 =============
@@ -920,7 +1006,11 @@ void R_SetupGL (void)
     glRotatef (-r_refdef.viewangles[1],  0, 0, 1);
     glTranslatef (-r_refdef.vieworg[0],  -r_refdef.vieworg[1],  -r_refdef.vieworg[2]);
 
+#ifdef USE_OPENGLES
+	glGetIntegerv (MODELVIEW_MATRIX_FLOAT_AS_INT_BITS_OES, (GLint*) r_world_matrix);	
+#else
 	glGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
+#endif
 
 	//
 	// set drawing parms
@@ -1020,7 +1110,11 @@ void R_Clear (void)
 		glDepthFunc (GL_LEQUAL);
 	}
 
+#ifdef USE_OPENGLES
+	glDepthRangef (gldepthmin, gldepthmax);
+#else
 	glDepthRange (gldepthmin, gldepthmax);
+#endif
 }
 
 #if 0 //!!! FIXME, Zoid, mirror is disabled for now

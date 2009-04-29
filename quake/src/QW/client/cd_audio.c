@@ -1,6 +1,6 @@
-#include <dpmi.h>
+// #include <dpmi.h>
 #include "quakedef.h"
-#include "dosisms.h"
+// #include "dosisms.h"
 
 extern	cvar_t	bgmvolume;
 
@@ -235,6 +235,7 @@ static int RedBookToSector(int rb)
 
 static void CDAudio_Reset(void)
 {
+#if 0
 	cdRequest->headerLength = 13;
 	cdRequest->unit = 0;
 	cdRequest->command = COMMAND_WRITE;
@@ -254,11 +255,14 @@ static void CDAudio_Reset(void)
 	regs.x.es = cdRequestSegment;
 	regs.x.bx = cdRequestOffset;
 	dos_int86 (0x2f);
+	
+#endif
 }
 
 
 static void CDAudio_Eject(void)
 {
+#if 0
 	cdRequest->headerLength = 13;
 	cdRequest->unit = 0;
 	cdRequest->command = COMMAND_WRITE;
@@ -278,11 +282,15 @@ static void CDAudio_Eject(void)
 	regs.x.es = cdRequestSegment;
 	regs.x.bx = cdRequestOffset;
 	dos_int86 (0x2f);
+
+#endif
+
 }
 
 
 static int CDAudio_GetAudioTrackInfo(byte track, int *start)
 {
+#if 0
 	byte	control;
 
 	cdRequest->headerLength = 13;
@@ -315,11 +323,17 @@ static int CDAudio_GetAudioTrackInfo(byte track, int *start)
 	*start = readInfo->audioTrackInfo.start;
 	control = readInfo->audioTrackInfo.control & AUDIO_CONTROL_MASK;
 	return (control & AUDIO_CONTROL_DATA_TRACK);
+	
+#endif
+
+	return 0;
+
 }
 
 
 static int CDAudio_GetAudioDiskInfo(void)
 {
+#if 0
 	int n;
 
 	cdRequest->headerLength = 13;
@@ -364,12 +378,15 @@ static int CDAudio_GetAudioDiskInfo(void)
 		}
 	}
 
+#endif
+
 	return 0;
 }
 
 
 static int CDAudio_GetAudioStatus(void)
 {
+#if 0
 	cdRequest->headerLength = 13;
 	cdRequest->unit = 0;
 	cdRequest->command = COMMAND_READ;
@@ -393,11 +410,14 @@ static int CDAudio_GetAudioStatus(void)
 	if (cdRequest->status & STATUS_ERROR_BIT)
 		return -1;
 	return 0;
+#endif
+	return 0;
 }
 
 
 static int CDAudio_MediaChange(void)
 {
+#if 0
 	cdRequest->headerLength = 13;
 	cdRequest->unit = 0;
 	cdRequest->command = COMMAND_READ;
@@ -419,6 +439,8 @@ static int CDAudio_MediaChange(void)
 	dos_int86 (0x2f);
 
 	return readInfo->mediaChange.status;
+#endif
+	return 0;
 }
 
 
@@ -434,6 +456,8 @@ void CDAudio_SetVolume (byte volume)
 {
 	if (!initialized || !enabled)
 		return;
+
+#if 0
 
 	cdRequest->headerLength = 13;
 	cdRequest->unit = 0;
@@ -472,12 +496,16 @@ void CDAudio_SetVolume (byte volume)
 	regs.x.bx = cdRequestOffset;
 	dos_int86 (0x2f);
 
+#endif
+
 	cdvolume = volume;
 }
 
 
 void CDAudio_Play(byte track, qboolean looping)
 {
+
+#if 0
 	if (!initialized || !enabled)
 		return;
 	
@@ -531,6 +559,8 @@ void CDAudio_Play(byte track, qboolean looping)
 		playing = false;
 		return;
 	}
+	
+#endif
 
 	playing = true;
 }
@@ -540,7 +570,8 @@ void CDAudio_Stop(void)
 {
 	if (!initialized || !enabled)
 		return;
-	
+
+#if 0
 	cdRequest->headerLength = 13;
 	cdRequest->unit = 0;
 	cdRequest->command = COMMAND_STOP_AUDIO;
@@ -551,6 +582,7 @@ void CDAudio_Stop(void)
 	regs.x.es = cdRequestSegment;
 	regs.x.bx = cdRequestOffset;
 	dos_int86 (0x2f);
+#endif
 
 	wasPlaying = playing;
 	playing = false;
@@ -568,6 +600,7 @@ void CDAudio_Resume(void)
 	if (!wasPlaying)
 		return;
 	
+#if 0
 	cdRequest->headerLength = 13;
 	cdRequest->unit = 0;
 	cdRequest->command = COMMAND_RESUME_AUDIO;
@@ -578,10 +611,10 @@ void CDAudio_Resume(void)
 	regs.x.es = cdRequestSegment;
 	regs.x.bx = cdRequestOffset;
 	dos_int86 (0x2f);
+#endif
 
 	playing = true;
 }
-
 
 static void CD_f (void)
 {
@@ -589,6 +622,7 @@ static void CD_f (void)
 	int		ret;
 	int		n;
 	int		startAddress;
+	startAddress = 0;
 
 	if (Cmd_Argc() < 2)
 		return;
@@ -692,7 +726,6 @@ static void CD_f (void)
 	}
 }
 
-
 void CDAudio_Update(void)
 {
 	int		ret;
@@ -764,6 +797,8 @@ int CDAudio_Init(void)
 	char	*memory;
 	int		n;
 
+#if 0
+
 	if (cls.state == ca_dedicated)
 		return -1;
 
@@ -819,6 +854,8 @@ int CDAudio_Init(void)
 	readInfo = (union readInfo_u *)(memory + sizeof(struct cd_request));
 	readInfoSegment = ptr2real(readInfo) >> 4;
 	readInfoOffset = ptr2real(readInfo) & 0xf;
+
+#endif
 
 	for (n = 0; n < 256; n++)
 		remap[n] = n;

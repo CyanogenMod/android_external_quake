@@ -34,49 +34,49 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 qboolean	noclip_anglehack;		// remnant from old quake
 
 
-cvar_t	rcon_password = {"rcon_password", "", false};
+cvar_t	rcon_password = CVAR3("rcon_password", "", false);
 
-cvar_t	rcon_address = {"rcon_address", ""};
+cvar_t	rcon_address = CVAR2("rcon_address", "");
 
-cvar_t	cl_timeout = {"cl_timeout", "60"};
+cvar_t	cl_timeout = CVAR2("cl_timeout", "60");
 
-cvar_t	cl_shownet = {"cl_shownet","0"};	// can be 0, 1, or 2
+cvar_t	cl_shownet = CVAR2("cl_shownet","0");	// can be 0, 1, or 2
 
-cvar_t	cl_sbar		= {"cl_sbar", "0", true};
-cvar_t	cl_hudswap	= {"cl_hudswap", "0", true};
-cvar_t	cl_maxfps	= {"cl_maxfps", "0", true};
+cvar_t	cl_sbar		= CVAR3("cl_sbar", "0", true);
+cvar_t	cl_hudswap	= CVAR3("cl_hudswap", "0", true);
+cvar_t	cl_maxfps	= CVAR3("cl_maxfps", "0", true);
 
-cvar_t	lookspring = {"lookspring","0", true};
-cvar_t	lookstrafe = {"lookstrafe","0", true};
-cvar_t	sensitivity = {"sensitivity","3", true};
+cvar_t	lookspring = CVAR3("lookspring","0", true);
+cvar_t	lookstrafe = CVAR3("lookstrafe","0", true);
+cvar_t	sensitivity = CVAR3("sensitivity","3", true);
 
-cvar_t	m_pitch = {"m_pitch","0.022", true};
-cvar_t	m_yaw = {"m_yaw","0.022"};
-cvar_t	m_forward = {"m_forward","1"};
-cvar_t	m_side = {"m_side","0.8"};
+cvar_t	m_pitch = CVAR3("m_pitch","0.022", true);
+cvar_t	m_yaw = CVAR2("m_yaw","0.022");
+cvar_t	m_forward = CVAR2("m_forward","1");
+cvar_t	m_side = CVAR2("m_side","0.8");
 
-cvar_t	entlatency = {"entlatency", "20"};
-cvar_t	cl_predict_players = {"cl_predict_players", "1"};
-cvar_t	cl_predict_players2 = {"cl_predict_players2", "1"};
-cvar_t	cl_solid_players = {"cl_solid_players", "1"};
+cvar_t	entlatency = CVAR2("entlatency", "20");
+cvar_t	cl_predict_players = CVAR2("cl_predict_players", "1");
+cvar_t	cl_predict_players2 = CVAR2("cl_predict_players2", "1");
+cvar_t	cl_solid_players = CVAR2("cl_solid_players", "1");
 
-cvar_t  localid = {"localid", ""};
+cvar_t  localid = CVAR2("localid", "");
 
 static qboolean allowremotecmd = true;
 
 //
 // info mirrors
 //
-cvar_t	password = {"password", "", false, true};
-cvar_t	spectator = {"spectator", "", false, true};
-cvar_t	name = {"name","unnamed", true, true};
-cvar_t	team = {"team","", true, true};
-cvar_t	skin = {"skin","", true, true};
-cvar_t	topcolor = {"topcolor","0", true, true};
-cvar_t	bottomcolor = {"bottomcolor","0", true, true};
-cvar_t	rate = {"rate","2500", true, true};
-cvar_t	noaim = {"noaim","0", true, true};
-cvar_t	msg = {"msg","1", true, true};
+cvar_t	password = CVAR4("password", "", false, true);
+cvar_t	spectator = CVAR4("spectator", "", false, true);
+cvar_t	name = CVAR4("name","unnamed", true, true);
+cvar_t	team = CVAR4("team","", true, true);
+cvar_t	skin = CVAR4("skin","", true, true);
+cvar_t	topcolor = CVAR4("topcolor","0", true, true);
+cvar_t	bottomcolor = CVAR4("bottomcolor","0", true, true);
+cvar_t	rate = CVAR4("rate","2500", true, true);
+cvar_t	noaim = CVAR4("noaim","0", true, true);
+cvar_t	msg = CVAR4("msg","1", true, true);
 
 extern cvar_t cl_hightrack;
 
@@ -116,9 +116,9 @@ byte		*host_colormap;
 
 netadr_t	master_adr;				// address of the master server
 
-cvar_t	host_speeds = {"host_speeds","0"};			// set for running times
-cvar_t	show_fps = {"show_fps","0"};			// set for running times
-cvar_t	developer = {"developer","0"};
+cvar_t	host_speeds = CVAR2("host_speeds","0");			// set for running times
+cvar_t	show_fps = CVAR2("show_fps","0");			// set for running times
+cvar_t	developer = CVAR2("developer","0");
 
 int			fps_count;
 
@@ -405,7 +405,7 @@ This is also called on Host_Error, so it shouldn't cause any errors
 */
 void CL_Disconnect (void)
 {
-	byte	final[10];
+	char	final[10];
 
 	connect_time = -1;
 
@@ -426,9 +426,9 @@ void CL_Disconnect (void)
 
 		final[0] = clc_stringcmd;
 		strcpy (final+1, "drop");
-		Netchan_Transmit (&cls.netchan, 6, final);
-		Netchan_Transmit (&cls.netchan, 6, final);
-		Netchan_Transmit (&cls.netchan, 6, final);
+		Netchan_Transmit (&cls.netchan, 6, (byte*) final);
+		Netchan_Transmit (&cls.netchan, 6, (byte*) final);
+		Netchan_Transmit (&cls.netchan, 6, (byte*) final);
 
 		cls.state = ca_disconnected;
 
@@ -625,7 +625,7 @@ void CL_FullInfo_f (void)
 		if (*s)
 			s++;
 
-		if (!stricmp(key, pmodel_name) || !stricmp(key, emodel_name))
+		if (!strcasecmp(key, pmodel_name) || !strcasecmp(key, emodel_name))
 			continue;
 
 		Info_SetValueForKey (cls.userinfo, key, value, MAX_INFO_STRING);

@@ -19,22 +19,34 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // disable data conversion warnings
 
+#ifdef _WIN32
 #pragma warning(disable : 4244)     // MIPS
 #pragma warning(disable : 4136)     // X86
 #pragma warning(disable : 4051)     // ALPHA
+#endif
   
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
+#ifdef USE_OPENGLES
+
+#include <GLES/gl.h>
+
+#else
+
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+#endif
 
 void GL_BeginRendering (int *x, int *y, int *width, int *height);
 void GL_EndRendering (void);
 
+#ifdef USE_OPENGLES
 
-#ifdef _WIN32
+#else // full OpenGL
+
 // Function prototypes for the Texture Object Extension routines
 typedef GLboolean (APIENTRY *ARETEXRESFUNCPTR)(GLsizei, const GLuint *,
                     const GLboolean *);
@@ -49,7 +61,8 @@ typedef void (APIENTRY *TEXSUBIMAGEPTR)(int, int, int, int, int, int, int, int, 
 extern	BINDTEXFUNCPTR bindTexFunc;
 extern	DELTEXFUNCPTR delTexFunc;
 extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
-#endif
+
+#endif // USE_OPENGLES
 
 extern	int texture_extension_number;
 extern	int		texture_mode;
@@ -58,8 +71,8 @@ extern	float	gldepthmin, gldepthmax;
 
 void GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap, qboolean alpha);
 void GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
-int GL_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha);
-int GL_FindTexture (char *identifier);
+int GL_LoadTexture (const char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha);
+int GL_FindTexture (const char *identifier);
 
 typedef struct
 {
@@ -129,7 +142,8 @@ typedef struct
 
 
 typedef enum {
-	pt_static, pt_grav, pt_slowgrav, pt_fire, pt_explode, pt_explode2, pt_blob, pt_blob2
+	pt_static, pt_grav, pt_slowgrav, pt_fire, pt_explode, pt_explode2, pt_blob, pt_blob2,
+	ptype_t_max = 1 << 30
 } ptype_t;
 
 // !!! if this is changed, it must be changed in d_ifacea.h too !!!
@@ -233,17 +247,25 @@ void R_TranslatePlayerSkin (int playernum);
 void GL_Bind (int texnum);
 
 // Multitexture
+#ifdef USE_OPENGLES
+
+#define    TEXTURE0_SGIS				GL_TEXTURE0
+#define    TEXTURE1_SGIS				GL_TEXTURE1
+
+#else
 #define    TEXTURE0_SGIS				0x835E
 #define    TEXTURE1_SGIS				0x835F
+#endif
 
 #ifndef _WIN32
 #define APIENTRY /* */
-#endif
 
 typedef void (APIENTRY *lpMTexFUNC) (GLenum, GLfloat, GLfloat);
 typedef void (APIENTRY *lpSelTexFUNC) (GLenum);
 extern lpMTexFUNC qglMTexCoord2fSGIS;
 extern lpSelTexFUNC qglSelectTextureSGIS;
+
+#endif
 
 extern qboolean gl_mtexable;
 

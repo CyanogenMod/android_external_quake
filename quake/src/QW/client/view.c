@@ -31,39 +31,39 @@ when crossing a water boudnary.
 
 */
 
-cvar_t	lcd_x = {"lcd_x", "0"};	// FIXME: make this work sometime...
+cvar_t	lcd_x = CVAR2("lcd_x", "0");	// FIXME: make this work sometime...
 
-cvar_t	cl_rollspeed = {"cl_rollspeed", "200"};
-cvar_t	cl_rollangle = {"cl_rollangle", "2.0"};
+cvar_t	cl_rollspeed = CVAR2("cl_rollspeed", "200");
+cvar_t	cl_rollangle = CVAR2("cl_rollangle", "2.0");
 
-cvar_t	cl_bob = {"cl_bob","0.02", false};
-cvar_t	cl_bobcycle = {"cl_bobcycle","0.6", false};
-cvar_t	cl_bobup = {"cl_bobup","0.5", false};
+cvar_t	cl_bob = CVAR3("cl_bob","0.02", false);
+cvar_t	cl_bobcycle = CVAR3("cl_bobcycle","0.6", false);
+cvar_t	cl_bobup = CVAR3("cl_bobup","0.5", false);
 
-cvar_t	v_kicktime = {"v_kicktime", "0.5", false};
-cvar_t	v_kickroll = {"v_kickroll", "0.6", false};
-cvar_t	v_kickpitch = {"v_kickpitch", "0.6", false};
+cvar_t	v_kicktime = CVAR3("v_kicktime", "0.5", false);
+cvar_t	v_kickroll = CVAR3("v_kickroll", "0.6", false);
+cvar_t	v_kickpitch = CVAR3("v_kickpitch", "0.6", false);
 
-cvar_t	v_iyaw_cycle = {"v_iyaw_cycle", "2", false};
-cvar_t	v_iroll_cycle = {"v_iroll_cycle", "0.5", false};
-cvar_t	v_ipitch_cycle = {"v_ipitch_cycle", "1", false};
-cvar_t	v_iyaw_level = {"v_iyaw_level", "0.3", false};
-cvar_t	v_iroll_level = {"v_iroll_level", "0.1", false};
-cvar_t	v_ipitch_level = {"v_ipitch_level", "0.3", false};
+cvar_t	v_iyaw_cycle = CVAR3("v_iyaw_cycle", "2", false);
+cvar_t	v_iroll_cycle = CVAR3("v_iroll_cycle", "0.5", false);
+cvar_t	v_ipitch_cycle = CVAR3("v_ipitch_cycle", "1", false);
+cvar_t	v_iyaw_level = CVAR3("v_iyaw_level", "0.3", false);
+cvar_t	v_iroll_level = CVAR3("v_iroll_level", "0.1", false);
+cvar_t	v_ipitch_level = CVAR3("v_ipitch_level", "0.3", false);
 
-cvar_t	v_idlescale = {"v_idlescale", "0", false};
+cvar_t	v_idlescale = CVAR3("v_idlescale", "0", false);
 
-cvar_t	crosshair = {"crosshair", "0", true};
-cvar_t	crosshaircolor = {"crosshaircolor", "79", true};
+cvar_t	crosshair = CVAR3("crosshair", "0", true);
+cvar_t	crosshaircolor = CVAR3("crosshaircolor", "79", true);
 
-cvar_t  cl_crossx = {"cl_crossx", "0", true};
-cvar_t  cl_crossy = {"cl_crossy", "0", true};
+cvar_t  cl_crossx = CVAR3("cl_crossx", "0", true);
+cvar_t  cl_crossy = CVAR3("cl_crossy", "0", true);
 
 #ifdef GLQUAKE
-cvar_t	gl_cshiftpercent = {"gl_cshiftpercent", "100", false};
+cvar_t	gl_cshiftpercent = CVAR3("gl_cshiftpercent", "100", false);
 #endif
 
-cvar_t  v_contentblend = {"v_contentblend", "1", false};
+cvar_t  v_contentblend = CVAR3("v_contentblend", "1", false);
 
 float	v_dmg_time, v_dmg_roll, v_dmg_pitch;
 
@@ -145,8 +145,8 @@ float V_CalcBob (void)
 //=============================================================================
 
 
-cvar_t	v_centermove = {"v_centermove", "0.15", false};
-cvar_t	v_centerspeed = {"v_centerspeed","500"};
+cvar_t	v_centermove = CVAR3("v_centermove", "0.15", false);
+cvar_t	v_centerspeed = CVAR2("v_centerspeed","500");
 
 
 void V_StartPitchDrift (void)
@@ -262,7 +262,7 @@ cshift_t	cshift_water = { {130,80,50}, 128 };
 cshift_t	cshift_slime = { {0,25,5}, 150 };
 cshift_t	cshift_lava = { {255,80,0}, 150 };
 
-cvar_t		v_gamma = {"gamma", "1", true};
+cvar_t		v_gamma = CVAR3("gamma", "1", true);
 
 byte		gammatable[256];	// palette is sent through this
 

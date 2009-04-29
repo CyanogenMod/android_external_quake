@@ -934,7 +934,7 @@ void Sbar_TeamOverlay (void)
 // draw the text
 	l = scoreboardlines;
 
-	for (i=0 ; i < scoreboardteams && y <= vid.height-10 ; i++)
+	for (i=0 ; i < scoreboardteams && y <= (int) (vid.height-10) ; i++)
 	{
 		k = teamsort[i];
 		tm = teams + k;
@@ -1055,7 +1055,7 @@ void Sbar_DeathmatchOverlay (int start)
 		y += 8;
 	}
 
-	for (i=0 ; i<l && y <= vid.height-10 ; i++)
+	for (i=0 ; i<l && y <= (int) (vid.height-10) ; i++)
 	{
 		k = fragsort[i];
 		s = &cl.players[k];
@@ -1142,7 +1142,7 @@ void Sbar_DeathmatchOverlay (int start)
 		y += skip;
 	}
 
-	if (y >= vid.height-10) // we ran over the screen size, squish
+	if (y >= (int) (vid.height-10)) // we ran over the screen size, squish
 		largegame = true;
 }
 
@@ -1207,7 +1207,7 @@ void Sbar_MiniDeathmatchOverlay (void)
 
 	x = 324;
 
-	for (/* */ ; i < scoreboardlines && y < vid.height - 8 + 1; i++)
+	for (/* */ ; i < scoreboardlines && y < (int) (vid.height - 8 + 1); i++)
 	{
 		k = fragsort[i];
 		s = &cl.players[k];
@@ -1261,13 +1261,13 @@ void Sbar_MiniDeathmatchOverlay (void)
 
 	// draw seperator
 	x += 208;
-	for (y = vid.height - sb_lines; y < vid.height - 6; y += 2)
+	for (y = vid.height - sb_lines; y < (int) (vid.height - 6); y += 2)
 		Draw_Character(x, y, 14);
 
 	x += 16;
 
 	y = vid.height - sb_lines;
-	for (i=0 ; i < scoreboardteams && y <= vid.height; i++)
+	for (i=0 ; i < scoreboardteams && y <= (int) vid.height; i++)
 	{
 		k = teamsort[i];
 		tm = teams + k;

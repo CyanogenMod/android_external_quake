@@ -110,6 +110,9 @@ void R_RenderDlight (dlight_t *light)
 		return;
 	}
 
+#ifdef USE_OPENGLES
+	// !!! Implement this.
+#else
 	glBegin (GL_TRIANGLE_FAN);
 //	glColor3f (0.2,0.1,0.0);
 //	glColor3f (0.2,0.1,0.05); // changed dimlight effect
@@ -130,6 +133,7 @@ void R_RenderDlight (dlight_t *light)
 		glVertex3fv (v);
 	}
 	glEnd ();
+#endif
 }
 
 /*

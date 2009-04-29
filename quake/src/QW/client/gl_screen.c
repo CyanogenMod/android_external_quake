@@ -82,16 +82,16 @@ float           scr_con_current;
 float           scr_conlines;           // lines of console to display
 
 float           oldscreensize, oldfov;
-cvar_t          scr_viewsize = {"viewsize","100", true};
-cvar_t          scr_fov = {"fov","90"}; // 10 - 170
-cvar_t          scr_conspeed = {"scr_conspeed","300"};
-cvar_t          scr_centertime = {"scr_centertime","2"};
-cvar_t          scr_showram = {"showram","1"};
-cvar_t          scr_showturtle = {"showturtle","0"};
-cvar_t          scr_showpause = {"showpause","1"};
-cvar_t          scr_printspeed = {"scr_printspeed","8"};
-cvar_t			scr_allowsnap = {"scr_allowsnap", "1"};
-cvar_t			gl_triplebuffer = {"gl_triplebuffer", "1", true };
+cvar_t          scr_viewsize = CVAR3("viewsize","100", true);
+cvar_t          scr_fov = CVAR2("fov","90"); // 10 - 170
+cvar_t          scr_conspeed = CVAR2("scr_conspeed","300");
+cvar_t          scr_centertime = CVAR2("scr_centertime","2");
+cvar_t          scr_showram = CVAR2("showram","1");
+cvar_t          scr_showturtle = CVAR2("showturtle","0");
+cvar_t          scr_showpause = CVAR2("showpause","1");
+cvar_t          scr_printspeed = CVAR2("scr_printspeed","8");
+cvar_t			scr_allowsnap = CVAR2("scr_allowsnap", "1");
+cvar_t			gl_triplebuffer = CVAR3("gl_triplebuffer", "1", true );
 extern  		cvar_t  crosshair;
 
 qboolean        scr_initialized;                // ready to draw
@@ -322,9 +322,9 @@ static void SCR_CalcRefdef (void)
 
 	r_refdef.vrect.height = vid.height * size;
 	if (cl_sbar.value || !full) {
-  		if (r_refdef.vrect.height > vid.height - sb_lines)
+  		if (r_refdef.vrect.height > (int) (vid.height - sb_lines))
   			r_refdef.vrect.height = vid.height - sb_lines;
-	} else if (r_refdef.vrect.height > vid.height)
+	} else if (r_refdef.vrect.height > (int) vid.height)
 			r_refdef.vrect.height = vid.height;
 	r_refdef.vrect.x = (vid.width - r_refdef.vrect.width)/2;
 	if (full)
@@ -465,7 +465,7 @@ void SCR_DrawFPS (void)
 	static double lastframetime;
 	double t;
 	extern int fps_count;
-	static lastfps;
+	static int lastfps;
 	int x, y;
 	char st[80];
 
@@ -753,7 +753,7 @@ int MipColor(int r, int g, int b)
 {
 	int i;
 	float dist;
-	int best;
+	int best = 0;
 	float bestdist;
 	int r1, g1, b1;
 	static int lr = -1, lg = -1, lb = -1;

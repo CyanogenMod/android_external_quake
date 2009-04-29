@@ -38,7 +38,7 @@ byte	mod_novis[MAX_MAP_LEAFS/8];
 model_t	mod_known[MAX_MOD_KNOWN];
 int		mod_numknown;
 
-cvar_t gl_subdivide_size = {"gl_subdivide_size", "128", true};
+cvar_t gl_subdivide_size = CVAR3("gl_subdivide_size", "128", true);
 
 /*
 ===============
@@ -1170,7 +1170,7 @@ void Mod_LoadBrushModel (model_t *mod, void *buffer)
 // swap all the lumps
 	mod_base = (byte *)header;
 
-	for (i=0 ; i<sizeof(dheader_t)/4 ; i++)
+	for (i=0 ; i< (int) sizeof(dheader_t)/4 ; i++)
 		((int *)header)[i] = LittleLong ( ((int *)header)[i]);
 
 // checksum all of the map, except for entities
@@ -1459,7 +1459,7 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			// save 8 bit texels for the player model to remap
 			if (!strcmp(loadmodel->name,"progs/player.mdl"))
 			{
-				if (s > sizeof(player_8bit_texels))
+				if (s > (int) sizeof(player_8bit_texels))
 					Sys_Error ("Player skin too large");
 				memcpy (player_8bit_texels, (byte *)(pskintype + 1), s);
 			}

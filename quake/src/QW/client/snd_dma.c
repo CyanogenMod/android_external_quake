@@ -71,18 +71,18 @@ int 		desired_bits = 16;
 
 int sound_started=0;
 
-cvar_t bgmvolume = {"bgmvolume", "1", true};
-cvar_t volume = {"volume", "0.7", true};
+cvar_t bgmvolume = CVAR3("bgmvolume", "1", true);
+cvar_t volume = CVAR3("volume", "0.7", true);
 
-cvar_t nosound = {"nosound", "0"};
-cvar_t precache = {"precache", "1"};
-cvar_t loadas8bit = {"loadas8bit", "0"};
-cvar_t bgmbuffer = {"bgmbuffer", "4096"};
-cvar_t ambient_level = {"ambient_level", "0.3"};
-cvar_t ambient_fade = {"ambient_fade", "100"};
-cvar_t snd_noextraupdate = {"snd_noextraupdate", "0"};
-cvar_t snd_show = {"snd_show", "0"};
-cvar_t _snd_mixahead = {"_snd_mixahead", "0.1", true};
+cvar_t nosound = CVAR2("nosound", "0");
+cvar_t precache = CVAR2("precache", "1");
+cvar_t loadas8bit = CVAR2("loadas8bit", "0");
+cvar_t bgmbuffer = CVAR2("bgmbuffer", "4096");
+cvar_t ambient_level = CVAR2("ambient_level", "0.3");
+cvar_t ambient_fade = CVAR2("ambient_fade", "100");
+cvar_t snd_noextraupdate = CVAR2("snd_noextraupdate", "0");
+cvar_t snd_show = CVAR2("snd_show", "0");
+cvar_t _snd_mixahead = CVAR3("_snd_mixahead", "0.1", true);
 
 
 // ====================================================================
@@ -874,7 +874,7 @@ void S_Update_(void)
 // mix ahead of current position
 	endtime = soundtime + _snd_mixahead.value * shm->speed;
 	samps = shm->samples >> (shm->channels-1);
-	if (endtime - soundtime > samps)
+	if ((int)(endtime - soundtime) > samps)
 		endtime = soundtime + samps;
 
 #ifdef _WIN32

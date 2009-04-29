@@ -88,7 +88,7 @@ void R_InitParticleTexture (void)
 			data[y][x][3] = dottexture[x][y]*255;
 		}
 	}
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexImage2DHelper (GL_TEXTURE_2D, 0, gl_alpha_format, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
@@ -105,6 +105,9 @@ Grab six views for environment mapping tests
 */
 void R_Envmap_f (void)
 {
+#ifdef USE_OPENGLES
+	// Not implemented
+#else
 	byte	buffer[256*256*4];
 
 	glDrawBuffer  (GL_FRONT);
@@ -160,6 +163,7 @@ void R_Envmap_f (void)
 	glDrawBuffer  (GL_BACK);
 	glReadBuffer  (GL_BACK);
 	GL_EndRendering ();
+#endif
 }
 
 /*
@@ -337,11 +341,11 @@ void R_TranslatePlayerSkin (int playernum)
 			out2 = (byte *)pixels;
 			memset(pixels, 0, sizeof(pixels));
 			fracstep = tinwidth*0x10000/scaled_width;
-			for (i=0 ; i<scaled_height ; i++, out2 += scaled_width)
+			for (i=0 ; i< (int) scaled_height ; i++, out2 += scaled_width)
 			{
 				inrow = original + inwidth*(i*tinheight/scaled_height);
 				frac = fracstep >> 1;
-				for (j=0 ; j<scaled_width ; j+=4)
+				for (j=0 ; j< (int) scaled_width ; j+=4)
 				{
 					out2[j] = translate[inrow[frac>>16]];
 					frac += fracstep;
@@ -364,11 +368,11 @@ void R_TranslatePlayerSkin (int playernum)
 		out = pixels;
 		memset(pixels, 0, sizeof(pixels));
 		fracstep = tinwidth*0x10000/scaled_width;
-		for (i=0 ; i<scaled_height ; i++, out += scaled_width)
+		for (i=0 ; i< (int) scaled_height ; i++, out += scaled_width)
 		{
 			inrow = original + inwidth*(i*tinheight/scaled_height);
 			frac = fracstep >> 1;
-			for (j=0 ; j<scaled_width ; j+=4)
+			for (j=0 ; j< (int) scaled_width ; j+=4)
 			{
 				out[j] = translate32[inrow[frac>>16]];
 				frac += fracstep;
@@ -381,7 +385,7 @@ void R_TranslatePlayerSkin (int playernum)
 			}
 		}
 
-		glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 
+		glTexImage2DHelper (GL_TEXTURE_2D, 0, gl_solid_format, 
 			scaled_width, scaled_height, 0, GL_RGBA, 
 			GL_UNSIGNED_BYTE, pixels);
 
@@ -444,6 +448,10 @@ For program optimization
 */
 void R_TimeRefresh_f (void)
 {
+#ifdef USE_OPENGLES
+	// Not implemented
+	Con_Printf("TimeRefresh not implemented.\n");
+#else
 	int			i;
 	float		start, stop, time;
 
@@ -464,6 +472,7 @@ void R_TimeRefresh_f (void)
 
 	glDrawBuffer  (GL_BACK);
 	GL_EndRendering ();
+#endif
 }
 
 void D_FlushCaches (void)

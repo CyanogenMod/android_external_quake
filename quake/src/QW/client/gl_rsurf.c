@@ -324,6 +324,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 //	if ((!(s->flags & (SURF_DRAWSKY|SURF_DRAWTURB)))
 //		&& ((r_viewleaf->contents!=CONTENTS_EMPTY && (s->flags & SURF_UNDERWATER)) ||
 //		(r_viewleaf->contents==CONTENTS_EMPTY && !(s->flags & SURF_UNDERWATER))))
+#if 0
 	if (0)
 	{
 		p = s->polys;
@@ -354,6 +355,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 		return;
 	}
+#endif
 
 	//
 	// subdivided water surface warp
@@ -602,6 +604,9 @@ void DrawGLWaterPoly (glpoly_t *p)
 
 	GL_DisableMultitexture();
 
+#ifdef USE_OPENGLES
+	// !!! Implement this.
+#else
 	glBegin (GL_TRIANGLE_FAN);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -615,6 +620,7 @@ void DrawGLWaterPoly (glpoly_t *p)
 		glVertex3fv (nv);
 	}
 	glEnd ();
+#endif
 }
 
 void DrawGLWaterPolyLightmap (glpoly_t *p)
@@ -625,6 +631,9 @@ void DrawGLWaterPolyLightmap (glpoly_t *p)
 
 	GL_DisableMultitexture();
 
+#ifdef USE_OPENGLES
+	// !!! Implement this.
+#else
 	glBegin (GL_TRIANGLE_FAN);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -638,6 +647,7 @@ void DrawGLWaterPolyLightmap (glpoly_t *p)
 		glVertex3fv (nv);
 	}
 	glEnd ();
+#endif
 }
 
 /*
@@ -650,6 +660,9 @@ void DrawGLPoly (glpoly_t *p)
 	int		i;
 	float	*v;
 
+#ifdef USE_OPENGLES
+	// !!! Implement this.
+#else
 	glBegin (GL_POLYGON);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -658,6 +671,7 @@ void DrawGLPoly (glpoly_t *p)
 		glVertex3fv (v);
 	}
 	glEnd ();
+#endif
 }
 
 
@@ -734,6 +748,9 @@ void R_BlendLightmaps (void)
 				DrawGLWaterPolyLightmap (p);
 			else
 			{
+#ifdef USE_OPENGLES
+	// !!! Implement this.
+#else
 				glBegin (GL_POLYGON);
 				v = p->verts[0];
 				for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
@@ -742,6 +759,7 @@ void R_BlendLightmaps (void)
 					glVertex3fv (v);
 				}
 				glEnd ();
+#endif
 			}
 		}
 	}
@@ -1685,7 +1703,7 @@ void GL_BuildLightmaps (void)
 		GL_Bind(lightmap_textures + i);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes
+		glTexImage2DHelper (GL_TEXTURE_2D, 0, lightmap_bytes
 		, BLOCK_WIDTH, BLOCK_HEIGHT, 0, 
 		gl_lightmap_format, GL_UNSIGNED_BYTE, lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes);
 	}

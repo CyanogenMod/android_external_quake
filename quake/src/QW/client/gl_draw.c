@@ -26,9 +26,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 extern unsigned char d_15to8table[65536];
 extern cvar_t crosshair, cl_crossx, cl_crossy, crosshaircolor;
 
-cvar_t		gl_nobind = {"gl_nobind", "0"};
-cvar_t		gl_max_size = {"gl_max_size", "1024"};
-cvar_t		gl_picmip = {"gl_picmip", "0"};
+cvar_t		gl_nobind = CVAR2("gl_nobind", "0");
+cvar_t		gl_max_size = CVAR2("gl_max_size", "1024");
+cvar_t		gl_picmip = CVAR2("gl_picmip", "0");
 
 byte		*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
@@ -416,7 +416,7 @@ void Draw_Init (void)
 
 	sprintf (ver, "%4.2f", VERSION);
 	dest = cb->data + 320 + 320*186 - 11 - 8*strlen(ver);
-	for (x=0 ; x<strlen(ver) ; x++)
+	for (x=0 ; x< (int) strlen(ver) ; x++)
 		Draw_CharToConback (ver[x], dest+(x<<3));
 
 #if 0
@@ -516,6 +516,9 @@ void Draw_Character (int x, int y, int num)
 
 	GL_Bind (char_texture);
 
+#ifdef USE_OPENGLES
+	DrawQuad(x, y, 8, 8, fcol, frow, size, size);
+#else
 	glBegin (GL_QUADS);
 	glTexCoord2f (fcol, frow);
 	glVertex2f (x, y);
@@ -526,6 +529,7 @@ void Draw_Character (int x, int y, int num)
 	glTexCoord2f (fcol, frow + size);
 	glVertex2f (x, y+8);
 	glEnd ();
+#endif
 }
 
 /*
@@ -573,6 +577,9 @@ void Draw_Crosshair(void)
 		glColor4ubv ( pColor );
 		GL_Bind (cs_texture);
 
+#ifdef USE_OPENGLES
+        DrawQuad(x - 4, y - 4, 16, 16, 0, 0, 1, 1);
+#else
 		glBegin (GL_QUADS);
 		glTexCoord2f (0, 0);
 		glVertex2f (x - 4, y - 4);
@@ -583,6 +590,7 @@ void Draw_Crosshair(void)
 		glTexCoord2f (0, 1);
 		glVertex2f (x - 4, y+12);
 		glEnd ();
+#endif
 		
 		glTexEnvf ( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
 	} else if (crosshair.value)
@@ -619,6 +627,9 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 	gl = (glpic_t *)pic->data;
 	glColor4f (1,1,1,1);
 	GL_Bind (gl->texnum);
+#ifdef USE_OPENGLES
+    DrawQuad(x, y, pic->width, pic->height, gl->sl, gl->tl, gl->sh - gl->sl, gl->th - gl->tl);
+#else
 	glBegin (GL_QUADS);
 	glTexCoord2f (gl->sl, gl->tl);
 	glVertex2f (x, y);
@@ -629,6 +640,7 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 	glTexCoord2f (gl->sl, gl->th);
 	glVertex2f (x, y+pic->height);
 	glEnd ();
+#endif
 }
 
 /*
@@ -649,6 +661,9 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	glCullFace(GL_FRONT);
 	glColor4f (1,1,1,alpha);
 	GL_Bind (gl->texnum);
+#ifdef USE_OPENGLES
+    DrawQuad(x, y, pic->width, pic->height, gl->sl, gl->tl, gl->sh - gl->sl, gl->th - gl->tl);
+#else
 	glBegin (GL_QUADS);
 	glTexCoord2f (gl->sl, gl->tl);
 	glVertex2f (x, y);
@@ -659,6 +674,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	glTexCoord2f (gl->sl, gl->th);
 	glVertex2f (x, y+pic->height);
 	glEnd ();
+#endif
 	glColor4f (1,1,1,1);
 	glEnable(GL_ALPHA_TEST);
 	glDisable (GL_BLEND);
@@ -685,6 +701,9 @@ void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int h
 	
 	glColor4f (1,1,1,1);
 	GL_Bind (gl->texnum);
+#ifdef USE_OPENGLES
+    DrawQuad(x, y, width, height, newsl, newtl, newsh - newsl, newth - newtl);
+#else
 	glBegin (GL_QUADS);
 	glTexCoord2f (newsl, newtl);
 	glVertex2f (x, y);
@@ -695,6 +714,7 @@ void Draw_SubPic(int x, int y, qpic_t *pic, int srcx, int srcy, int width, int h
 	glTexCoord2f (newsl, newth);
 	glVertex2f (x, y+height);
 	glEnd ();
+#endif
 }
 
 /*
@@ -747,12 +767,15 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 		}
 	}
 
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 64, 64, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
+	glTexImage2DHelper (GL_TEXTURE_2D, 0, gl_alpha_format, 64, 64, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glColor3f (1,1,1);
+#ifdef USE_OPENGLES
+	DrawQuad(x, y, pic->width, pic->height, 0, 0, 1, 1);
+#else
 	glBegin (GL_QUADS);
 	glTexCoord2f (0, 0);
 	glVertex2f (x, y);
@@ -763,6 +786,7 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 	glTexCoord2f (0, 1);
 	glVertex2f (x, y+pic->height);
 	glEnd ();
+#endif
 }
 
 
@@ -794,7 +818,7 @@ void Draw_ConsoleBackground (int lines)
 		sprintf (ver, "GL (%4.2f) QuakeWorld", GLQUAKE_VERSION);
 #endif
 		x = vid.conwidth - (strlen(ver)*8 + 11) - (vid.conwidth*8/320)*7;
-		for (i=0 ; i<strlen(ver) ; i++)
+		for (i=0 ; i< (int) strlen(ver) ; i++)
 			Draw_Character (x + i * 8, y, ver[i] | 0x80);
 	}
 }
@@ -812,6 +836,9 @@ void Draw_TileClear (int x, int y, int w, int h)
 {
 	glColor3f (1,1,1);
 	GL_Bind (*(int *)draw_backtile->data);
+#ifdef USE_OPENGLES
+	DrawQuad(x, y, w, h, x/64.0, y/64.0, w/64.0, h/64.0);
+#else
 	glBegin (GL_QUADS);
 	glTexCoord2f (x/64.0, y/64.0);
 	glVertex2f (x, y);
@@ -822,6 +849,7 @@ void Draw_TileClear (int x, int y, int w, int h)
 	glTexCoord2f ( x/64.0, (y+h)/64.0 );
 	glVertex2f (x, y+h);
 	glEnd ();
+#endif
 }
 
 
@@ -839,6 +867,9 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 		host_basepal[c*3+1]/255.0,
 		host_basepal[c*3+2]/255.0);
 
+#ifdef USE_OPENGLES
+	DrawQuad_NoTex(x, y, w, h);
+#else
 	glBegin (GL_QUADS);
 
 	glVertex2f (x,y);
@@ -847,6 +878,7 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	glVertex2f (x, y+h);
 
 	glEnd ();
+#endif
 	glColor3f (1,1,1);
 	glEnable (GL_TEXTURE_2D);
 }
@@ -863,6 +895,10 @@ void Draw_FadeScreen (void)
 	glEnable (GL_BLEND);
 	glDisable (GL_TEXTURE_2D);
 	glColor4f (0, 0, 0, 0.8);
+
+#ifdef USE_OPENGLES
+	DrawQuad_NoTex(0, 0, vid.width, vid.height);
+#else
 	glBegin (GL_QUADS);
 
 	glVertex2f (0,0);
@@ -871,6 +907,7 @@ void Draw_FadeScreen (void)
 	glVertex2f (0, vid.height);
 
 	glEnd ();
+#endif
 	glColor4f (1,1,1,1);
 	glEnable (GL_TEXTURE_2D);
 	glDisable (GL_BLEND);
@@ -892,9 +929,13 @@ void Draw_BeginDisc (void)
 {
 	if (!draw_disc)
 		return;
+#ifdef USE_OPENGLES
+	// !!! Implement this
+#else
 	glDrawBuffer  (GL_FRONT);
 	Draw_Pic (vid.width - 24, 0, draw_disc);
 	glDrawBuffer  (GL_BACK);
+#endif
 }
 
 
@@ -923,7 +964,11 @@ void GL_Set2D (void)
 
 	glMatrixMode(GL_PROJECTION);
     glLoadIdentity ();
+#ifdef USE_OPENGLES
+	glOrthof (0, vid.width, vid.height, 0, -99999, 99999);
+#else
 	glOrtho  (0, vid.width, vid.height, 0, -99999, 99999);
+#endif
 
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity ();
@@ -1077,6 +1122,22 @@ void GL_MipMap8Bit (byte *in, int width, int height)
 		}
 }
 
+void glTexImage2DHelper( GLenum target,
+	 GLint level,
+	 GLint internalformat,
+	 GLsizei width,
+	 GLsizei height,
+	 GLint border,
+	 GLenum format,
+	 GLenum type,
+	 const GLvoid *pixels )
+{
+	// In full OpenGL The internalformat can be 1..4, to indicate how many components of the data are valid.
+	// OpenGL ES requires the internalformat argument match the format for glTexImage2D.
+	
+	glTexImage2D(target, level, format, width, height, border, format, type, pixels);
+}
+
 /*
 ===============
 GL_Upload32
@@ -1096,12 +1157,12 @@ static	unsigned	scaled[1024*512];	// [512*256];
 	scaled_width >>= (int)gl_picmip.value;
 	scaled_height >>= (int)gl_picmip.value;
 
-	if (scaled_width > gl_max_size.value)
+	if (scaled_width > (int) gl_max_size.value)
 		scaled_width = gl_max_size.value;
-	if (scaled_height > gl_max_size.value)
+	if (scaled_height > (int) gl_max_size.value)
 		scaled_height = gl_max_size.value;
 
-	if (scaled_width * scaled_height > sizeof(scaled)/4)
+	if (scaled_width * scaled_height > (int) sizeof(scaled)/4)
 		Sys_Error ("GL_LoadTexture: too big");
 
 	samples = alpha ? gl_alpha_format : gl_solid_format;
@@ -1124,7 +1185,7 @@ texels += scaled_width * scaled_height;
 	{
 		if (!mipmap)
 		{
-			glTexImage2D (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glTexImage2DHelper (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 			goto done;
 		}
 		memcpy (scaled, data, width*height*4);
@@ -1132,7 +1193,7 @@ texels += scaled_width * scaled_height;
 	else
 		GL_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
 
-	glTexImage2D (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
+	glTexImage2DHelper (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
 	if (mipmap)
 	{
 		int		miplevel;
@@ -1148,7 +1209,7 @@ texels += scaled_width * scaled_height;
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
-			glTexImage2D (GL_TEXTURE_2D, miplevel, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
+			glTexImage2DHelper (GL_TEXTURE_2D, miplevel, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
 		}
 	}
 done: ;
@@ -1203,7 +1264,7 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	if (scaled_height > gl_max_size.value)
 		scaled_height = gl_max_size.value;
 
-	if (scaled_width * scaled_height > sizeof(scaled))
+	if (scaled_width * scaled_height > (int) sizeof(scaled))
 		Sys_Error ("GL_LoadTexture: too big");
 
 	samples = 1; // alpha ? gl_alpha_format : gl_solid_format;
@@ -1214,7 +1275,11 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	{
 		if (!mipmap)
 		{
+#ifdef USE_OPENGLES
+			glCompressedTexImage2D (GL_TEXTURE_2D, 0, GL_PALETTE8_RGB8_OES, scaled_width, scaled_height, 0, s, data);
+#else
 			glTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX , GL_UNSIGNED_BYTE, data);
+#endif
 			goto done;
 		}
 		memcpy (scaled, data, width*height);
@@ -1222,7 +1287,12 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	else
 		GL_Resample8BitTexture (data, width, height, scaled, scaled_width, scaled_height);
 
+#ifdef USE_OPENGLES
+	glCompressedTexImage2D (GL_TEXTURE_2D, 0, GL_PALETTE8_RGB8_OES, scaled_width, scaled_height, 0, s, scaled);
+#else
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, scaled);
+#endif
+
 	if (mipmap)
 	{
 		int		miplevel;
@@ -1238,7 +1308,11 @@ void GL_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
+#ifdef USE_OPENGLES
+			glCompressedTexImage2D (GL_TEXTURE_2D, miplevel, GL_PALETTE8_RGB8_OES, scaled_width, scaled_height, 0, s, scaled);
+#else
 			glTexImage2D (GL_TEXTURE_2D, miplevel, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, scaled);
+#endif
 		}
 	}
 done: ;
@@ -1367,8 +1441,12 @@ void GL_SelectTexture (GLenum target)
 {
 	if (!gl_mtexable)
 		return;
+#ifdef USE_OPENGLES
+	// !!! Implement this.
+#else
 #ifndef __linux__ // no multitexture under Linux yet
 	qglSelectTextureSGIS(target);
+#endif
 #endif
 	if (target == oldtarget) 
 		return;
@@ -1376,3 +1454,49 @@ void GL_SelectTexture (GLenum target)
 	currenttexture = cnttextures[target-TEXTURE0_SGIS];
 	oldtarget = target;
 }
+
+
+// OpenGL ES compatible DrawQuad utility
+
+void DrawQuad_NoTex(float x, float y, float w, float h)
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	float vertex[2*4] = {x,y,x+w,y, x+w, y+h, x, y+h};
+	short index[4] = {0, 1, 2, 3};
+	glVertexPointer( 2, GL_FLOAT, 0, vertex);
+	glDrawElements(GL_TRIANGLE_FAN, 4, GL_SHORT, index);
+}
+
+void DrawQuad(float x, float y, float w, float h, float u, float v, float uw, float vh)
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    float texcoord[2*4] = {u, v, u + uw, v, u + uw, v + vh, u, v + vh};
+	float vertex[2*4] = {x,y,x+w,y, x+w, y+h, x, y+h};
+	unsigned short index[4] = {0, 1, 2, 3};
+	glTexCoordPointer( 2, GL_FLOAT, 0, texcoord);
+	glVertexPointer( 2, GL_FLOAT, 0, vertex);
+	glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_SHORT, index);
+}
+
+#ifdef USE_OPENGLES
+
+// Reimplementation of OpenGL functions that are missing in OpenGL ES
+
+void glColor3f(GLfloat r, GLfloat g, GLfloat b)
+{
+	glColor4f(r, g, b, 1.0f);
+}
+
+void glColor4fv(GLfloat* pColor)
+{
+	glColor4f(pColor[0], pColor[1], pColor[2], pColor[3]);
+}
+
+void glColor4ubv(unsigned char* pColor)
+{
+	glColor4f(pColor[0] / 255.0f, pColor[1] / 255.0f, pColor[2] / 255.0f, pColor[3] / 255.0f);
+}
+
+#endif

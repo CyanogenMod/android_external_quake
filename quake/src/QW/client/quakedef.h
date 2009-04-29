@@ -27,7 +27,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #pragma warning( disable : 4244 4127 4201 4214 4514 4305 4115 4018)
 #endif
 
+#define GLQUAKE
+#define USE_OPENGLES
+#define id386 0
 
+#include <ctype.h>
 #include <math.h>
 #include <string.h>
 #include <stdarg.h>
@@ -35,6 +39,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <stdlib.h>
 #include <setjmp.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "bothdefs.h"
 
@@ -139,4 +144,28 @@ void Host_ShutdownServer (qboolean crash);
 
 extern qboolean		msg_suppress_1;		// suppresses resolution and cache size console output
 										//  an fullscreen DIB focus gain/loss
+
+
+// Linux versions of msdos CRT functions
+#define stricmp strcasecmp
+
+// Helper functions for OpenGL ES
+void DrawQuad_NoTex(GLfloat x, GLfloat y, GLfloat w, GLfloat h);
+void DrawQuad(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat u, GLfloat v, GLfloat uw, GLfloat vh);
+
+void shadowLoadIdentity( GLfloat* m);
+void shadowRotatef( GLfloat* m, GLfloat a, GLfloat x, GLfloat y, GLfloat z);
+void shadowTranslatef( GLfloat* m, GLfloat x, GLfloat y, GLfloat z);
+
+#ifdef USE_OPENGLES
+// Reimplementation of OpenGL functions that are missing in OpenGL ES
+
+#define GL_INTENSITY				0x8049
+
+void glColor3f(GLfloat r, GLfloat g, GLfloat b);
+void glColor4fv(GLfloat* pColor);
+void glColor4ubv(unsigned char* pColor);
+
+
+#endif
 

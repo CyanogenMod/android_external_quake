@@ -43,7 +43,12 @@ typedef struct edict_s
 	entity_state_t	baseline;
 	
 	float		freetime;			// sv.time when the object was freed
-	entvars_t	v;					// C exported fields from progs
+	union {
+	  entvars_t	v;					// C exported fields from progs
+	  int i[1]; // Variable length
+	  float f[1];
+	  string_t s[1];
+	} u;
 // other fields from progs come immediately after
 } edict_t;
 #define	EDICT_FROM_AREA(l) STRUCT_FROM_LINK(l,edict_t,area)
@@ -73,7 +78,7 @@ void PR_Profile_f (void);
 edict_t *ED_Alloc (void);
 void ED_Free (edict_t *ed);
 
-char	*ED_NewString (char *string);
+char	*ED_NewString (const char *string);
 // returns a copy of the string allocated from the server's string heap
 
 void ED_Print (edict_t *ed);
@@ -106,10 +111,10 @@ int NUM_FOR_EDICT(edict_t *e);
 #define	G_STRING(o) (pr_strings + *(string_t *)&pr_globals[o])
 #define	G_FUNCTION(o) (*(func_t *)&pr_globals[o])
 
-#define	E_FLOAT(e,o) (((float*)&e->v)[o])
-#define	E_INT(e,o) (*(int *)&((float*)&e->v)[o])
-#define	E_VECTOR(e,o) (&((float*)&e->v)[o])
-#define	E_STRING(e,o) (pr_strings + *(string_t *)&((float*)&e->v)[o])
+#define	E_FLOAT(e,o) (((float*)&e->u.v)[o])
+#define	E_INT(e,o) (*(int *)&((float*)&e->u.v)[o])
+#define	E_VECTOR(e,o) (&((float*)&e->u.v)[o])
+#define	E_STRING(e,o) (pr_strings + e->u.s[o])
 
 extern	int		type_size[8];
 
@@ -125,10 +130,10 @@ extern	int			pr_xstatement;
 
 extern	unsigned short		pr_crc;
 
-void PR_RunError (char *error, ...);
+void PR_RunError (const char *error, ...);
 
 void ED_PrintEdicts (void);
 void ED_PrintNum (int ent);
 
-eval_t *GetEdictFieldValue(edict_t *ed, char *field);
+eval_t *GetEdictFieldValue(edict_t *ed, const char *field);
 

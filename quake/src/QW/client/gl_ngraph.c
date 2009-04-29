@@ -117,7 +117,7 @@ void R_NetGraph (void)
 	
     GL_Bind(netgraphtexture);
 
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 
+	glTexImage2DHelper (GL_TEXTURE_2D, 0, gl_alpha_format, 
 		NET_TIMINGS, NET_GRAPHHEIGHT, 0, GL_RGBA, 
 		GL_UNSIGNED_BYTE, ngraph_pixels);
 
@@ -126,6 +126,11 @@ void R_NetGraph (void)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	x = 8;
+	
+#ifdef USE_OPENGLES
+	glColor4f (1,1,1,1);
+	DrawQuad(x, y, NET_TIMINGS, NET_GRAPHHEIGHT, 0, 0, 1, 1);
+#else
 	glColor3f (1,1,1);
 	glBegin (GL_QUADS);
 	glTexCoord2f (0, 0);
@@ -137,5 +142,6 @@ void R_NetGraph (void)
 	glTexCoord2f (0, 1);
 	glVertex2f (x, y+NET_GRAPHHEIGHT);
 	glEnd ();
+#endif
 }
 

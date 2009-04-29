@@ -117,7 +117,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 
-typedef enum {key_game, key_console, key_message, key_menu} keydest_t;
+typedef enum {key_game, key_console, key_message, key_menu, keydest_t_max = 1 << 30} keydest_t;
 
 extern keydest_t	key_dest;
 extern char *keybindings[256];
@@ -128,6 +128,6 @@ extern	int		key_lastpress;
 void Key_Event (int key, qboolean down);
 void Key_Init (void);
 void Key_WriteBindings (FILE *f);
-void Key_SetBinding (int keynum, char *binding);
+void Key_SetBinding (int keynum, const char *binding);
 void Key_ClearStates (void);
 
