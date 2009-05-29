@@ -1,6 +1,7 @@
+#########################################################################
 # Quake game
 # This makefile builds both an activity and a shared library.
-
+#########################################################################
 ifneq ($(TARGET_SIMULATOR),true) # not 64 bit clean
 
 TOP_LOCAL_PATH:= $(call my-dir)
@@ -20,16 +21,16 @@ LOCAL_JNI_SHARED_LIBRARIES := libquake
 
 include $(BUILD_PACKAGE)
 
+#########################################################################
 # Build Quake Shared Library
+#########################################################################
 
 LOCAL_PATH:= $(LOCAL_PATH)/quake/src/WinQuake
 
 include $(CLEAR_VARS)
 
-# This isn't a test, but giving it a tests tag
-# means that this apk won't be installed by
-# default in any configuration.
-LOCAL_MODULE_TAGS := tests
+# Optional tag would mean it doesn't get installed by default
+LOCAL_MODULE_TAGS := optional
 
 LOCAL_CFLAGS := -Werror
 
@@ -104,7 +105,9 @@ LOCAL_PRELINK_MODULE := false
 
 include $(BUILD_SHARED_LIBRARY)
 
+#########################################################################
 # Build stand-alone quake executable on device
+#########################################################################
 
 ifneq ($(BUILD_TINY_ANDROID),true)
 ifeq ($(TARGET_ARCH),arm)
@@ -118,7 +121,7 @@ LOCAL_SHARED_LIBRARIES := libc libm libui libquake libEGL libGLESv1_CM
 
 LOCAL_MODULE:= quake
 
-LOCAL_MODULE_TAGS := tests
+LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_EXECUTABLE)
 
