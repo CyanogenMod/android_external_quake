@@ -4,7 +4,7 @@
 #include <GLES/gl.h>
 #include <pthread.h>
 #include <ui/EventHub.h>
-#include <ui/EGLDisplaySurface.h>
+#include <ui/FramebufferNativeWindow.h>
 
 extern void AndroidInitArgs(int argc, char** argv);
 extern int AndroidInit();
