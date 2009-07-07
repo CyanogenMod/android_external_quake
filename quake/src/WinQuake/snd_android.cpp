@@ -254,7 +254,7 @@ qboolean SNDDMA_Init(void)
   if ( result == NO_ERROR ) {
     LOGI("AudioTrack latency = %u ms\n", gAudioTrack.latency());
     LOGI("AudioTrack format = %u bits\n", gAudioTrack.format() == AudioSystem::PCM_16_BIT ? 16 : 8);
-    LOGI("AudioTrack sample rate = %u Hz\n", gAudioTrack.sampleRate());
+    LOGI("AudioTrack sample rate = %u Hz\n", gAudioTrack.getSampleRate());
     LOGI("AudioTrack frame count = %d\n", int(gAudioTrack.frameCount()));
     LOGI("AudioTrack channel count = %d\n", gAudioTrack.channelCount());
 
@@ -265,7 +265,7 @@ qboolean SNDDMA_Init(void)
 
     shm->splitbuffer = false;	// Not used.
     shm->samplebits = gAudioTrack.format() == AudioSystem::PCM_16_BIT ? 16 : 8;
-    shm->speed = gAudioTrack.sampleRate();
+    shm->speed = gAudioTrack.getSampleRate();
     shm->channels = gAudioTrack.channelCount();
     shm->samples = TOTAL_BUFFER_SIZE / BYTES_PER_SAMPLE;
     shm->samplepos = 0; // Not used.
