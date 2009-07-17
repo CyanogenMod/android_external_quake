@@ -242,7 +242,7 @@ qboolean SNDDMA_Init(void)
     AudioSystem::DEFAULT, // stream type
     SAMPLE_RATE,   // sample rate
     BITS_PER_SAMPLE == 16 ? AudioSystem::PCM_16_BIT : AudioSystem::PCM_8_BIT,      // format (8 or 16)
-    CHANNEL_COUNT,       // channel count
+    (CHANNEL_COUNT > 1) ? AudioSystem::CHANNEL_OUT_STEREO : AudioSystem::CHANNEL_OUT_MONO,       // channel mask
     0,       // default buffer size
     0, // flags
     AndroidQuakeSoundCallback, // callback
