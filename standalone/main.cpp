@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <ui/EventHub.h>
 #include <ui/FramebufferNativeWindow.h>
+#include <ui/EGLUtils.h>
 
 extern void AndroidInitArgs(int argc, char** argv);
 extern int AndroidInit();
@@ -186,14 +187,9 @@ int init(int argc, char** argv) {
     };
  
     EGLConfig config;
-    int numConfigs = 0;
-    eglChooseConfig(gDisplay, configRequest, &config, 1, &numConfigs);
-    checkEGLError("eglChooseConfig");
-   
-    gSurface = eglCreateWindowSurface(gDisplay, config,
-            android_createDisplaySurface(), NULL);
-
-    checkEGLError("eglMapWindowSurface");
+    EGLNativeWindowType window = android_createDisplaySurface();
+    gSurface = eglCreateWindowSurface(gDisplay, config, window, NULL);
+    android::EGLUtils::selectConfigForNativeWindow(gDisplay, configRequest, window, &config);
 
     eglQuerySurface(gDisplay, gSurface, EGL_WIDTH, &gDisplayWidth);
     eglQuerySurface(gDisplay, gSurface, EGL_HEIGHT, &gDisplayHeight);
