@@ -180,7 +180,6 @@ int init(int argc, char** argv) {
     checkEGLError("eglInitialize");
         
     EGLint configRequest[] = {
-            EGL_RED_SIZE, 5, EGL_GREEN_SIZE, 6, EGL_BLUE_SIZE, 5,
             EGL_DEPTH_SIZE, 16,
             EGL_STENCIL_SIZE, 0,
             EGL_NONE
@@ -188,8 +187,8 @@ int init(int argc, char** argv) {
  
     EGLConfig config;
     EGLNativeWindowType window = android_createDisplaySurface();
-    gSurface = eglCreateWindowSurface(gDisplay, config, window, NULL);
     android::EGLUtils::selectConfigForNativeWindow(gDisplay, configRequest, window, &config);
+    gSurface = eglCreateWindowSurface(gDisplay, config, window, NULL);
 
     eglQuerySurface(gDisplay, gSurface, EGL_WIDTH, &gDisplayWidth);
     eglQuerySurface(gDisplay, gSurface, EGL_HEIGHT, &gDisplayHeight);
