@@ -170,7 +170,9 @@ int init(int argc, char** argv) {
     if (! gNoEvents) {
         gpEventQueue = new EventQueue();
     }
-    
+
+    EGLNativeWindowType window = android_createDisplaySurface();
+
     gDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     
     EGLint majorVersion;
@@ -186,7 +188,6 @@ int init(int argc, char** argv) {
     };
  
     EGLConfig config;
-    EGLNativeWindowType window = android_createDisplaySurface();
     android::EGLUtils::selectConfigForNativeWindow(gDisplay, configRequest, window, &config);
     gSurface = eglCreateWindowSurface(gDisplay, config, window, NULL);
 
