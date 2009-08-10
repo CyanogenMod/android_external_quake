@@ -9,25 +9,7 @@
 #
 function gettop
 {
-    TOPFILE=config/envsetup.make
-    if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
-        echo $TOP
-    else
-        if [ -f $TOPFILE ] ; then
-            echo $PWD
-        else
-            HERE=$PWD
-            T=
-            while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
-                cd ..
-                T=$PWD
-            done
-            cd $HERE
-            if [ -f "$T/$TOPFILE" ]; then
-                echo $T
-            fi
-        fi
-    fi
+    echo $TOP
 }
 
 T=$(gettop)
@@ -46,5 +28,5 @@ adb shell mkdir /sdcard/data/quake
 adb shell mkdir /sdcard/data/quake/id1
 
 echo "Copying Quake data files to the device. (This could take several minutes)"
-adb push $T/apps/Quake/quake/app/id1 /sdcard/data/quake/id1
+adb push $T/external/quake/quake/app/id1 /sdcard/data/quake/id1
 echo "Done."
