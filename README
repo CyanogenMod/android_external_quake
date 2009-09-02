@@ -2,10 +2,24 @@ Quake
 
 In order to run Quake on the simulator and/or device, you must:
 
-	1) Build
-	2) Install
-	3) Run
-	4) Uninstalling Quake (this step is optional)
+	1) Configure the Sources
+        2) Build
+	3) Install
+	4) Run
+	5) Uninstall Quake (this step is optional)
+
+Configure the Sources
+---------------------
+
+Edit src/com/android/quake/QuakeActivity.java to configure where and how Quake will obtain its data files. The
+configuration variables are:
+
+    private final static boolean USE_INTERNAL_FLASH = true;
+    private final static boolean USE_DOWNLOADER = false;
+
+If you set them to these values, then Quake will look for its files on the internal device flash, and will not
+attempt to download the files from an external web server. (Use the ./setupdevice.sh script, described below, to
+copy the data files from the Android source tree onto the device's internal flash.)
 
 Building Quake
 --------------
@@ -40,10 +54,14 @@ Make sure your device is not mounted as an USB Storage Device:
     Select "SD card & phone storage
     Make sure "Use for USB storage" is unchecked.
 
-Then install the Quake data files:
+Then install the Quake data files by executing this script:
+
+	./setupdevice.sh
+
+(Or if you've set QuakeActivity.USE_INTERNAL_FLASH to false, then use this script instead:)
 
 	./setupdevicesdcard.sh
-	
+
 Using the emulator:
 
 	You can use Quake with the emulator, but you have to create and mount an sdcard image.
