@@ -104,7 +104,7 @@ public class QuakeActivity extends Activity {
         return f.exists();
     }
 
-    private final static boolean USE_INTERNAL_FLASH = true;
+    private final static boolean USE_INTERNAL_FLASH = false;
     private final static boolean USE_DOWNLOADER = false;
     
     private final static String FILE_CONFIG_URL =

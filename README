@@ -14,12 +14,16 @@ Configure the Sources
 Edit src/com/android/quake/QuakeActivity.java to configure where and how Quake will obtain its data files. The
 configuration variables are:
 
-    private final static boolean USE_INTERNAL_FLASH = true;
+    private final static boolean USE_INTERNAL_FLASH = false;
     private final static boolean USE_DOWNLOADER = false;
 
-If you set them to these values, then Quake will look for its files on the internal device flash, and will not
-attempt to download the files from an external web server. (Use the ./setupdevice.sh script, described below, to
-copy the data files from the Android source tree onto the device's internal flash.)
+This means that by default Quake will look for its files on the SD Card, and it will not
+attempt to download the files from an external web server. (Use the ./setupdevicesdcard.sh script,
+described below, to copy the data files from the Android source tree onto the device's SD Card.)
+
+Note that if USE_DOWNLOADER is set to true then you need to configure a web server to serve the Quake
+data files, and the FILE_CONFIG_URL variable needs to be set to point to the configuration file on
+the web server. Read the source for DownloaderActivity.java to figure out how to do this.
 
 Building Quake
 --------------
