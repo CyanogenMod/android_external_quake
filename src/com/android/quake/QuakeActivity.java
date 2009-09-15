@@ -38,7 +38,7 @@ public class QuakeActivity extends Activity {
         if (USE_DOWNLOADER) {
             if (! DownloaderActivity.ensureDownloaded(this,
                     getString(R.string.quake_customDownloadText), FILE_CONFIG_URL,
-                    CONFIG_VERSION, DATA_PATH, USER_AGENT)) {
+                    CONFIG_VERSION, SDCARD_DATA_PATH, USER_AGENT)) {
                 return;
             }
         }
@@ -96,7 +96,8 @@ public class QuakeActivity extends Activity {
     }
 
     private boolean foundQuakeData() {
-        return fileExists(DATA_PATH + "/id1/pak0.pak");
+        return fileExists(SDCARD_DATA_PATH + PAK0_PATH)
+		|| fileExists(INTERNAL_DATA_PATH + PAK0_PATH);
     }
 
     private boolean fileExists(String s) {
@@ -104,14 +105,14 @@ public class QuakeActivity extends Activity {
         return f.exists();
     }
 
-    private final static boolean USE_INTERNAL_FLASH = false;
     private final static boolean USE_DOWNLOADER = false;
     
     private final static String FILE_CONFIG_URL =
-        "http://sunnyvale.frotz.net/android/quake/quake11.config";
+        "http://example.com/android/quake/quake11.config";
     private final static String CONFIG_VERSION = "1.1";
-    private final static String DATA_PATH = USE_INTERNAL_FLASH ?
-            "/data/quake" : "/sdcard/data/quake";
+    private final static String SDCARD_DATA_PATH = "/sdcard/data/quake";
+    private final static String INTERNAL_DATA_PATH = "/data/quake";
+    private final static String PAK0_PATH = "/id1/pak0.pak";
     private final static String USER_AGENT = "Android Quake Downloader";
 
 }

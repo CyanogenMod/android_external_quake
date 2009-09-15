@@ -472,15 +472,19 @@ void CheckGLCacheVersion(const char* baseDir)
   if(!validCache) {
     PMPLOG(("Invalidating glquake cache."));
     char cacheDirPath[1024];
-    if ( (int)(sizeof(cacheDirPath)-1) < snprintf(cacheDirPath, sizeof(cachePath), "%s" GLQUAKE_RELPATH, baseDir)) {
+    if ( (int)(sizeof(cacheDirPath)-1) < snprintf(cacheDirPath, sizeof(cacheDirPath), "%s" GLQUAKE_RELPATH, baseDir)) {
       return; // Ran out ot memory
     }
     rmDir(cacheDirPath);
     Sys_mkdir(cacheDirPath);
     FILE* f = fopen(cachePath, "wb");
-    GLCacheVersion vernum = kCurrentCacheVersion;
-    fwrite(&vernum, sizeof(vernum), 1, f);
-    fclose(f);
+    if (f) {
+      GLCacheVersion vernum = kCurrentCacheVersion;
+      fwrite(&vernum, sizeof(vernum), 1, f);
+      fclose(f);
+    } else {
+        PMPLOG(("Could not write %s %d.\n", cachePath, errno));
+    }
   }
 }
 
