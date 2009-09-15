@@ -21,6 +21,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.quake">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application android:icon="@drawable/app_quake"
             android:label="@string/quake_activity">
         <activity android:name="QuakeActivity"
