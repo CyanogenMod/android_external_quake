@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -32,7 +32,7 @@ R_AnimateLight
 void R_AnimateLight (void)
 {
 	int			i,j,k;
-	
+
 //
 // light animations
 // 'm' is normal light, 'a' is no light, 'z' is double bright
@@ -48,7 +48,7 @@ void R_AnimateLight (void)
 		k = cl_lightstyle[j].map[k] - 'a';
 		k = k*22;
 		d_lightstylevalue[j] = k;
-	}	
+	}
 }
 
 /*
@@ -92,21 +92,23 @@ void R_RenderDlight (dlight_t *light)
     glEnableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, gVertexBuffer);
-	glColorPointer(3, GL_FLOAT, 0, gColorBuffer);
+	glColorPointer(4, GL_FLOAT, 0, gColorBuffer);
 
 	{
 	    float* pPos = gVertexBuffer;
 		float* pColor = gColorBuffer;
-		*pColor++ = 0.2;
-		*pColor++ = 0.1;
-		*pColor++ = 0.0;
+		*pColor++ = 0.2f;
+		*pColor++ = 0.1f;
+		*pColor++ = 0.0f;
+		*pColor++ = 1.0f;
 		for (i=0 ; i<3 ; i++)
 			*pPos++ = light->origin[i] - vpn[i]*rad;
 		for (i=16 ; i>=0 ; i--)
 		{
-			*pColor++ = 0.0;
-			*pColor++ = 0.0;
-			*pColor++ = 0.0;
+			*pColor++ = 0.0f;
+			*pColor++ = 0.0f;
+			*pColor++ = 0.0f;
+			*pColor++ = 0.0f;
 			a = i/16.0 * M_PI*2;
 			for (j=0 ; j<3 ; j++)
 				*pPos++ = light->origin[j] + vright[j]*cos(a)*rad
@@ -117,7 +119,7 @@ void R_RenderDlight (dlight_t *light)
     glDisableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glColor3f(0,0,0); // Ensure the color ends up being zero just like the non-OpenGLES code
-	
+
 #else
 	glBegin (GL_TRIANGLE_FAN);
 	glColor3f (0.2,0.1,0.0);
@@ -193,13 +195,13 @@ void R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 	float		dist;
 	msurface_t	*surf;
 	int			i;
-	
+
 	if (node->contents < 0)
 		return;
 
 	splitplane = node->plane;
 	dist = DotProduct (light->origin, splitplane->normal) - splitplane->dist;
-	
+
 	if (dist > light->radius)
 	{
 		R_MarkLights (light, bit, node->children[0]);
@@ -210,7 +212,7 @@ void R_MarkLights (dlight_t *light, int bit, mnode_t *node)
 		R_MarkLights (light, bit, node->children[1]);
 		return;
 	}
-		
+
 // mark the polygons
 	surf = cl.worldmodel->surfaces + node->firstsurface;
 	for (i=0 ; i<node->numsurfaces ; i++, surf++)
@@ -282,7 +284,7 @@ int RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 
 	if (node->contents < 0)
 		return -1;		// didn't hit anything
-	
+
 // calculate mid point
 
 // FIXME: optimize for axial
@@ -290,23 +292,23 @@ int RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 	front = DotProduct (start, plane->normal) - plane->dist;
 	back = DotProduct (end, plane->normal) - plane->dist;
 	side = front < 0;
-	
+
 	if ( (back < 0) == side)
 		return RecursiveLightPoint (node->children[side], start, end);
-	
+
 	frac = front / (front-back);
 	mid[0] = start[0] + (end[0] - start[0])*frac;
 	mid[1] = start[1] + (end[1] - start[1])*frac;
 	mid[2] = start[2] + (end[2] - start[2])*frac;
-	
-// go down front side	
+
+// go down front side
 	r = RecursiveLightPoint (node->children[side], start, mid);
 	if (r >= 0)
 		return r;		// hit something
-		
+
 	if ( (back < 0) == side )
 		return -1;		// didn't hit anuthing
-		
+
 // check for impact on this node
 	VectorCopy (mid, lightspot);
 	lightplane = plane;
@@ -318,17 +320,17 @@ int RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 			continue;	// no lightmaps
 
 		tex = surf->texinfo;
-		
+
 		s = (int) (DotProduct (mid, tex->vecs[0]) + tex->vecs[0][3]);
 		t = (int) (DotProduct (mid, tex->vecs[1]) + tex->vecs[1][3]);
 
 		if (s < surf->texturemins[0] ||
 		t < surf->texturemins[1])
 			continue;
-		
+
 		ds = s - surf->texturemins[0];
 		dt = t - surf->texturemins[1];
-		
+
 		if ( ds > surf->extents[0] || dt > surf->extents[1] )
 			continue;
 
@@ -353,10 +355,10 @@ int RecursiveLightPoint (mnode_t *node, vec3_t start, vec3_t end)
 				lightmap += ((surf->extents[0]>>4)+1) *
 						((surf->extents[1]>>4)+1);
 			}
-			
+
 			r >>= 8;
 		}
-		
+
 		return r;
 	}
 
@@ -368,16 +370,16 @@ int R_LightPoint (vec3_t p)
 {
 	vec3_t		end;
 	int			r;
-	
+
 	if (!cl.worldmodel->lightdata)
 		return 255;
-	
+
 	end[0] = p[0];
 	end[1] = p[1];
 	end[2] = p[2] - 2048;
-	
+
 	r = RecursiveLightPoint (cl.worldmodel->nodes, p, end);
-	
+
 	if (r == -1)
 		r = 0;
 

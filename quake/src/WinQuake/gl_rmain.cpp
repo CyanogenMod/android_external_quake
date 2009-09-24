@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -35,7 +35,7 @@ mplane_t	frustum[4];
 
 int			c_brush_polys, c_alias_polys;
 
-qboolean	envmap;				// true during envmap command capture 
+qboolean	envmap;				// true during envmap command capture
 
 int			currenttexture = -1;		// to avoid unnecessary texture sets
 
@@ -237,7 +237,7 @@ void R_DrawSpriteModel (entity_t *e)
 			1, 0,
 			1, 1
 		};
-		
+
 		VectorMA (e->origin, frame->down, up, point);
 		VectorMA (point, frame->left, right, pPoint);
 		pPoint += 3;
@@ -252,12 +252,12 @@ void R_DrawSpriteModel (entity_t *e)
 
 		VectorMA (e->origin, frame->down, up, point);
 		VectorMA (point, frame->right, right, pPoint);
-		
+
 		glVertexPointer(3, GL_FLOAT, 0, gVertexBuffer);
 		glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 	}
-	
+
 #else
 	glBegin (GL_QUADS);
 
@@ -280,7 +280,7 @@ void R_DrawSpriteModel (entity_t *e)
 	VectorMA (e->origin, frame->down, up, point);
 	VectorMA (point, frame->right, right, point);
 	glVertex3fv (point);
-	
+
 	glEnd ();
 #endif
 
@@ -349,7 +349,7 @@ lastposenum = posenum;
 		count = *order++;
 		if (!count)
 			break;		// done
-			
+
 #ifdef USE_OPENGLES
 		{
 			int primType;
@@ -357,7 +357,7 @@ lastposenum = posenum;
 			float* pColor;
 			float* pTexCoord;
 			float* pPos;
-			
+
 			if (count < 0)
 			{
 				count = -count;
@@ -365,12 +365,12 @@ lastposenum = posenum;
 			}
 			else
 				primType = GL_TRIANGLE_STRIP;
-			
+
 			// texture coordinates come from the draw list
 			glTexCoordPointer(2, GL_FLOAT, 0, gTexCoordBuffer);
 			glVertexPointer(3, GL_FLOAT, 0, gVertexBuffer);
-			glColorPointer(3, GL_FLOAT, 0, gColorBuffer);
-		
+			glColorPointer(4, GL_FLOAT, 0, gColorBuffer);
+
 			pColor = gColorBuffer;
 			pPos = gVertexBuffer;
 			pTexCoord = gTexCoordBuffer;
@@ -381,18 +381,19 @@ lastposenum = posenum;
 				*pTexCoord++ = ((float *)order)[0];
 				*pTexCoord++ = ((float *)order)[1];
 				order += 2;
-				
+
 				// normals and vertexes come from the frame list
 				l = shadedots[verts->lightnormalindex] * shadelight;
 				*pColor++ = l;
 				*pColor++ = l;
 				*pColor++ = l;
+				*pColor++ = 1.0f;
 				*pPos++ = verts->v[0];
 				*pPos++ = verts->v[1];
 				*pPos++ = verts->v[2];
 				verts++;
 		    } while (--c);
-									
+
 			glDrawArrays(primType, 0, count);
 		}
 
@@ -464,14 +465,14 @@ void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 		count = *order++;
 		if (!count)
 			break;		// done
-			
+
 #ifdef USE_OPENGLES
 
 		{
 			int primType;
 			int c;
 			float* pVertex;
-			
+
 			if (count < 0)
 			{
 				count = -count;
@@ -479,7 +480,7 @@ void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 			}
 			else
 				primType = GL_TRIANGLE_STRIP;
-					
+
 			pVertex = gVertexBuffer;
 			for(c = 0; c < count; c++)
 			{
@@ -496,11 +497,11 @@ void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 				pVertex[1] -= shadevector[1]*(pVertex[2]+lheight);
 				pVertex[2] = height;
 	//			height -= 0.001;
-	
+
 				pVertex += 3;
 				verts++;
 			}
-			
+
 			glVertexPointer(3, GL_FLOAT, 0, gVertexBuffer);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 			glDrawArrays(primType, 0, count);
@@ -538,10 +539,10 @@ void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 		} while (--count);
 
 		glEnd ();
-		
+
 #endif
 
-	}	
+	}
 }
 
 
@@ -655,7 +656,7 @@ void R_DrawAliasModel (entity_t *e)
 
 	shadedots = r_avertexnormal_dots[((int)(e->angles[1] * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
 	shadelight = shadelight / 200.0;
-	
+
 	an = e->angles[1]/180*M_PI;
 	shadevector[0] = cos(-an);
 	shadevector[1] = sin(-an);
@@ -826,7 +827,7 @@ void R_DrawViewModel (void)
 	ambientlight = j;
 	shadelight = j;
 
-// add dynamic lights		
+// add dynamic lights
 	for (lnum=0 ; lnum<MAX_DLIGHTS ; lnum++)
 	{
 		dl = &cl_dlights[lnum];
@@ -932,7 +933,7 @@ void R_SetFrustum (void)
 {
 	int		i;
 
-	if (r_refdef.fov_x == 90) 
+	if (r_refdef.fov_x == 90)
 	{
 		// front side is visible
 
@@ -1130,7 +1131,7 @@ static void setRotateM(float* rm, int rmOffset,
         float zx = z * x;
         float xs = x * s;
         float ys = y * s;
-        float zs = z * s;       
+        float zs = z * s;
         rm[rmOffset +  0] = x*x*nc +  c;
         rm[rmOffset +  4] =  xy*nc - zs;
         rm[rmOffset +  8] =  zx*nc + ys;
@@ -1215,7 +1216,7 @@ void R_SetupGL (void)
 		glCullFace(GL_FRONT);
 
 	glMatrixMode(GL_MODELVIEW);
-	
+
 #ifdef DO_OWN_MATRIX_MATH
 
 	float mv[16];
@@ -1229,7 +1230,7 @@ void R_SetupGL (void)
     translateM(mv, 0, -r_refdef.vieworg[0],  -r_refdef.vieworg[1],  -r_refdef.vieworg[2]);
 
     glLoadMatrixf(mv);
-    
+
     memcpy(r_world_matrix, mv, sizeof(r_world_matrix));
 
 #else
@@ -1523,6 +1524,6 @@ void R_RenderView (void)
 	{
 //		glFinish ();
 		time2 = Sys_FloatTime ();
-		Con_Printf ("%3i ms  %4i wpoly %4i epoly\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys); 
+		Con_Printf ("%3i ms  %4i wpoly %4i epoly\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys);
 	}
 }
