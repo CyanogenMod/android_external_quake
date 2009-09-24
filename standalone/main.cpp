@@ -182,8 +182,8 @@ int init(int argc, char** argv) {
     checkEGLError("eglInitialize");
         
     EGLint configRequest[] = {
+            EGL_SURFACE_TYPE, EGL_PBUFFER_BIT|EGL_WINDOW_BIT,
             EGL_DEPTH_SIZE, 16,
-            EGL_STENCIL_SIZE, 0,
             EGL_NONE
     };
  
