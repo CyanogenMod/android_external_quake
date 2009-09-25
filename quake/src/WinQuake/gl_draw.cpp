@@ -2094,3 +2094,13 @@ void GL_ReInit() {
 }
 
 #endif
+
+#ifdef DEBUG_OPENGL_CALLS
+void checkGLImp(const char* state, const char* file, int line) {
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+    	Sys_Error("%s: error 0x%04X at %s:%d\n", state, error, file, line);
+    }
+}
+
+#endif

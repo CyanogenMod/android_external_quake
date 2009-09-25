@@ -178,13 +178,17 @@ void GL_Init (void)
 {
   gl_vendor = (char*) glGetString (GL_VENDOR);
   Con_Printf ("GL_VENDOR: %s\n", gl_vendor);
+  GLCHECK("glGetString");
   gl_renderer = (char*) glGetString (GL_RENDERER);
   Con_Printf ("GL_RENDERER: %s\n", gl_renderer);
+  GLCHECK("glGetString");
 
   gl_version = (char*) glGetString (GL_VERSION);
   Con_Printf ("GL_VERSION: %s\n", gl_version);
+  GLCHECK("glGetString");
   gl_extensions = (char*) glGetString (GL_EXTENSIONS);
   Con_Printf ("GL_EXTENSIONS: %s\n", gl_extensions);
+  GLCHECK("glGetString");
 
 //	Con_Printf ("%s %s\n", gl_renderer, gl_version);
 
