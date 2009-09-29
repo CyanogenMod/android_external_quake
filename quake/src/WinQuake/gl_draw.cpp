@@ -1465,6 +1465,7 @@ inline unsigned int average4_8888(unsigned int a, unsigned int b,
 
 // pData is 8 bpp 32-bit color
 
+
 void sendTexture(int mipLevel, int width, int height, unsigned int* pData, qboolean alpha) {
     if (alpha) {
 #if defined(USE_16BPP_WITH_8888_ALPHA)
@@ -1486,8 +1487,21 @@ void sendTexture(int mipLevel, int width, int height, unsigned int* pData, qbool
         glTexImage2D(GL_TEXTURE_2D, mipLevel, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pData);
 #else
         // 565
+        static	unsigned short scaled[1024*512];	// [512*256];
         glTexImage2D(GL_TEXTURE_2D, mipLevel, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, 0);
-        glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pData);
+        // Some OpenGL ES implementations do not have to be able to convert from GL_RGBA to GL_RGB format, so
+        // we must do it manually here:
+        unsigned char* pSrc = (unsigned char*) pData;
+        unsigned short* pDest = scaled;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                *pDest++ = ((pSrc[0] >> 3) << 11) |
+                    ((pSrc[1] >> 2) << 5) |
+                    (pSrc[2] >> 3);
+                pSrc += 4;
+            }
+        }
+        glTexSubImage2D(GL_TEXTURE_2D, mipLevel, 0, 0, width, height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, scaled);
 #endif
     }
 }
@@ -1500,8 +1514,8 @@ GL_Upload32
 void GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap, qboolean alpha)
 {
   int			samples;
-static	unsigned	scaled[1024*512];	// [512*256];
   int			scaled_width, scaled_height;
+  static	unsigned	scaled[1024*512];	// [512*256];
 
   for (scaled_width = 1 ; scaled_width < width ; scaled_width<<=1)
     ;
