@@ -117,7 +117,7 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= main.cpp
 
-LOCAL_SHARED_LIBRARIES := libc libm libui libquake libEGL libGLESv1_CM
+LOCAL_SHARED_LIBRARIES := libc libm libutils libui libquake libEGL libGLESv1_CM
 
 LOCAL_MODULE:= quake
 
