@@ -126,12 +126,18 @@ private:
     void* eventThreadMain() {
         gHub = new android::EventHub();
         while(true) {
-            Event event;
-            bool result = gHub->getEvent(&event.deviceId,
-                    &event.type,
-                    &event.scancode, &event.keycode, &event.flags,
-                    &event.value, &event.when);
+            android::RawEvent rawEvent;
+            bool result = gHub->getEvent(& rawEvent);
             if (result) {
+                Event event;
+                event.deviceId = rawEvent.deviceId;
+                event.when = rawEvent.when;
+                event.type = rawEvent.type;
+                event.value = rawEvent.value;
+                event.keycode = rawEvent.keyCode;
+                event.scancode = rawEvent.scanCode;
+                event.flags = rawEvent.flags;
+
                 Lock lock(m_mutex);
                 while( m_Count == MAX_EVENTS) {
                     lock.wait(m_space_available);
