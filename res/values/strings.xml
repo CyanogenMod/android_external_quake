@@ -24,7 +24,8 @@
 <resources>
     <!-- Simple strings. -->
     <string name="quake_activity">Quake</string>
-    <string name="quake_customDownloadText">Please wait while the Quake data files are copied to your SD card.</string>
+    <!-- Displayed while copying Quake data to storage.  CHAR LIMIT=NONE -->
+    <string name="quake_customDownloadText">Please wait while the Quake data files are copied.</string>
     <string name="download_activity_title">Downloading</string>
     <string name="download_activity_cancel">Cancel Download</string>
     <string name="download_activity_progress">Progress:</string>
