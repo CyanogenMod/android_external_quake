@@ -136,7 +136,7 @@ class QuakeView extends GLSurfaceView {
 
     private int keyCodeToQuakeCode(int keyCode) {
         int key = 0;
-        if (key >= sKeyCodeToQuakeCode.length) {
+        if (keyCode >= sKeyCodeToQuakeCode.length) {
             return 0;
         }
         if (mAltKeyPressed) {
@@ -209,7 +209,18 @@ class QuakeView extends GLSurfaceView {
         '.', QuakeLib.K_ALT, QuakeLib.K_ALT, QuakeLib.K_SHIFT,  QuakeLib.K_SHIFT, QuakeLib.K_TAB, ' ', '$', // 56..63
         '$', '$', QuakeLib.K_ENTER, QuakeLib.K_BACKSPACE, '`', '-',  '=', '[', // 64..71
         ']', '\\', ';', '\'', '/', QuakeLib.K_CTRL,  '#', '$', // 72..79
-        QuakeLib.K_HOME, '$', QuakeLib.K_ESCAPE, '$',  '$'                      // 80..84
+        QuakeLib.K_HOME, '$', QuakeLib.K_ESCAPE, '$',  '$', 0, 0, 0, 0,             // 80..
+        0, 0, QuakeLib.K_PGUP, QuakeLib.K_PGDN, 0,  0, 0, 0, 0, 0,             // 90..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 100..
+        0, QuakeLib.K_ESCAPE, QuakeLib.K_DEL, QuakeLib.K_CTRL, QuakeLib.K_CTRL,  0, 0, 0, 0, 0,             // 110..
+        0, 0, QuakeLib.K_HOME, QuakeLib.K_END, QuakeLib.K_INS,  0, 0, 0, 0, 0,             // 120..
+        0, QuakeLib.K_F1, QuakeLib.K_F2, QuakeLib.K_F3, QuakeLib.K_F4,                    // 130..134
+        QuakeLib.K_F5, QuakeLib.K_F6, QuakeLib.K_F7, QuakeLib.K_F8, QuakeLib.K_F9,        // 135..139
+        QuakeLib.K_F10, QuakeLib.K_F11, QuakeLib.K_F12, 0, 0,  0, 0, 0, 0, 0,             // 140..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 150..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 160
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 170..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0              // 180..
     };
 
     private static final int sKeyCodeToQuakeCodeShift[] =
@@ -225,7 +236,18 @@ class QuakeView extends GLSurfaceView {
         0, 0, 0, 0,  0, 0, 0, 0, // 56..63
         0, 0, 0, 0,  0, 0, 0, 0, // 64..71
         0, 0, '?', '0',  0, QuakeLib.K_CTRL, 0, 0, // 72..79
-        0, 0, 0, 0,  0                       // 80..84
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 80..
+        0, 0, QuakeLib.K_PGUP, QuakeLib.K_PGDN, 0,  0, 0, 0, 0, 0,             // 90..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 100..
+        0, QuakeLib.K_ESCAPE, QuakeLib.K_DEL, QuakeLib.K_CTRL, QuakeLib.K_CTRL,  0, 0, 0, 0, 0,             // 110..
+        0, 0, QuakeLib.K_HOME, QuakeLib.K_END, QuakeLib.K_INS,  0, 0, 0, 0, 0,             // 120..
+        0, QuakeLib.K_F1, QuakeLib.K_F2, QuakeLib.K_F3, QuakeLib.K_F4,                    // 130..134
+        QuakeLib.K_F5, QuakeLib.K_F6, QuakeLib.K_F7, QuakeLib.K_F8, QuakeLib.K_F9,        // 135..139
+        QuakeLib.K_F10, QuakeLib.K_F11, QuakeLib.K_F12, 0, 0,  0, 0, 0, 0, 0,             // 140..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 150..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 160
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 170..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0              // 180..
     };
 
     private static final int sKeyCodeToQuakeCodeAlt[] =
@@ -241,7 +263,18 @@ class QuakeView extends GLSurfaceView {
         0, 0, 0, 0,  0, 0, 0, 0, // 56..63
         0, 0, 0, 0,  0, 0, 0, 0, // 64..71
         0, 0, 0, 0,  0, 0, 0, 0, // 72..79
-        0, 0, 0, 0,  0           // 80..83
+        0, 0, 0, 0,  0, 0, 0, 0, 0,             // 80..
+        0, 0, QuakeLib.K_PGUP, QuakeLib.K_PGDN, 0,  0, 0, 0, 0, 0,             // 90..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 100..
+        0, QuakeLib.K_ESCAPE, QuakeLib.K_DEL, QuakeLib.K_CTRL, QuakeLib.K_CTRL,  0, 0, 0, 0, 0,             // 110..
+        0, 0, QuakeLib.K_HOME, QuakeLib.K_END, QuakeLib.K_INS,  0, 0, 0, 0, 0,             // 120..
+        0, QuakeLib.K_F1, QuakeLib.K_F2, QuakeLib.K_F3, QuakeLib.K_F4,                    // 130..134
+        QuakeLib.K_F5, QuakeLib.K_F6, QuakeLib.K_F7, QuakeLib.K_F8, QuakeLib.K_F9,        // 135..139
+        QuakeLib.K_F10, QuakeLib.K_F11, QuakeLib.K_F12, 0, 0,  0, 0, 0, 0, 0,             // 140..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 150..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 160
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0,             // 170..
+        0, 0, 0, 0, 0,  0, 0, 0, 0, 0             // 180..
     };
 
     private class QuakeRenderer implements GLSurfaceView.Renderer {
