@@ -308,6 +308,7 @@ extern	double		host_frametime;
 extern	byte		*host_basepal;
 extern	byte		*host_colormap;
 extern	int			host_framecount;	// incremented every frame, never reset
+extern  qboolean    host_framethrottled; // Running too fast
 extern	double		realtime;			// not bounded in any way, changed at
 										// start of every frame, never reset
 

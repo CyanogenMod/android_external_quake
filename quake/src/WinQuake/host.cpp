@@ -42,6 +42,7 @@ double		host_time;
 double		realtime;				// without any filtering or bounding
 double		oldrealtime;			// last frame run
 int			host_framecount;
+qboolean    host_framethrottled; // Running too fast
 
 int			host_hunklevel;
 
@@ -644,7 +645,8 @@ void _Host_Frame (float time)
 	rand ();
 	
 // decide the simulation time
-	if (!Host_FilterTime (time))
+    host_framethrottled = !Host_FilterTime (time);
+	if (host_framethrottled)
 		return;			// don't run too fast, or packets will flood out
 		
 // get new key events

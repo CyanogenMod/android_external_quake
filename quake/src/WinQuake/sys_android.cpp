@@ -622,7 +622,7 @@ static void UpdateFrameTimes(float time)
   currentFrame++;
 }
 
-int AndroidStep(int width, int height)
+int AndroidStepImp(int width, int height)
 {
   // PMPBEGIN(("AndroidStep"));
   double time, newtime;
@@ -643,6 +643,18 @@ int AndroidStep(int width, int height)
   g_oldtime = newtime;
   // PMPEND(("AndroidStep"));
   return key_dest == key_game;
+}
+
+int AndroidStep(int width, int height)
+{
+  for(;;) {
+    host_framethrottled = false;
+    int result = AndroidStepImp(width, height);
+    if (!host_framethrottled) {
+        return result;
+    }
+    usleep(1000);
+  }
 }
 
 extern void Host_Quit();
