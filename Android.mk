@@ -105,27 +105,4 @@ LOCAL_PRELINK_MODULE := false
 
 include $(BUILD_SHARED_LIBRARY)
 
-#########################################################################
-# Build stand-alone quake executable on device
-#########################################################################
-
-ifneq ($(BUILD_TINY_ANDROID),true)
-ifeq ($(TARGET_ARCH),arm)
-
-LOCAL_PATH:= $(TOP_LOCAL_PATH)/standalone
-include $(CLEAR_VARS)
-
-LOCAL_SRC_FILES:= main.cpp
-
-LOCAL_SHARED_LIBRARIES := libc libm libutils libui libquake libEGL libGLESv1_CM
-
-LOCAL_MODULE:= quake
-
-LOCAL_MODULE_TAGS := optional
-
-include $(BUILD_EXECUTABLE)
-
-endif
-endif
-
 endif # TARGET_SIMULATOR
