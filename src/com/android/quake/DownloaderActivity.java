@@ -28,7 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.FileLock;
 
-import android.security.MessageDigest;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
