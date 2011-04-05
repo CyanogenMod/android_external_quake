@@ -13,6 +13,8 @@
 #include <utils/Log.h>
 #include <media/AudioTrack.h>
 
+#include <hardware/audio.h>
+
 using namespace android;
 
 static AudioTrack gAudioTrack;
@@ -239,10 +241,10 @@ qboolean SNDDMA_Init(void)
   // Initialize the AudioTrack.
 
   status_t result = gAudioTrack.set(
-    AudioSystem::DEFAULT, // stream type
+    AUDIO_STREAM_DEFAULT, // stream type
     SAMPLE_RATE,   // sample rate
-    BITS_PER_SAMPLE == 16 ? AudioSystem::PCM_16_BIT : AudioSystem::PCM_8_BIT,      // format (8 or 16)
-    (CHANNEL_COUNT > 1) ? AudioSystem::CHANNEL_OUT_STEREO : AudioSystem::CHANNEL_OUT_MONO,       // channel mask
+    BITS_PER_SAMPLE == 16 ? AUDIO_FORMAT_PCM_16_BIT : AUDIO_FORMAT_PCM_8_BIT,      // format (8 or 16)
+    (CHANNEL_COUNT > 1) ? AUDIO_CHANNEL_OUT_STEREO : AUDIO_CHANNEL_OUT_MONO,       // channel mask
     0,       // default buffer size
     0, // flags
     AndroidQuakeSoundCallback, // callback
@@ -253,7 +255,7 @@ qboolean SNDDMA_Init(void)
 
   if ( result == NO_ERROR ) {
     LOGI("AudioTrack latency = %u ms\n", gAudioTrack.latency());
-    LOGI("AudioTrack format = %u bits\n", gAudioTrack.format() == AudioSystem::PCM_16_BIT ? 16 : 8);
+    LOGI("AudioTrack format = %u bits\n", gAudioTrack.format() == AUDIO_FORMAT_PCM_16_BIT ? 16 : 8);
     LOGI("AudioTrack sample rate = %u Hz\n", gAudioTrack.getSampleRate());
     LOGI("AudioTrack frame count = %d\n", int(gAudioTrack.frameCount()));
     LOGI("AudioTrack channel count = %d\n", gAudioTrack.channelCount());
@@ -264,7 +266,7 @@ qboolean SNDDMA_Init(void)
     memset((void*)&sn, 0, sizeof(sn));
 
     shm->splitbuffer = false;	// Not used.
-    shm->samplebits = gAudioTrack.format() == AudioSystem::PCM_16_BIT ? 16 : 8;
+    shm->samplebits = gAudioTrack.format() == AUDIO_FORMAT_PCM_16_BIT ? 16 : 8;
     shm->speed = gAudioTrack.getSampleRate();
     shm->channels = gAudioTrack.channelCount();
     shm->samples = TOTAL_BUFFER_SIZE / BYTES_PER_SAMPLE;
