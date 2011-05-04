@@ -500,7 +500,7 @@ static float sinef(float x)
 }
 
 static
-void AndroidQuakeSoundCallback(int event, void* user, void *info) {
+void AndroidQuakeSoundCallback(AudioTrack::event_type event, void* user, void *info) {
 
     if (event != AudioTrack::EVENT_MORE_DATA) return;
 
@@ -568,7 +568,7 @@ static bool shouldMixSilence() {
 }
 
 static
-void AndroidQuakeSoundCallback(int event, void* user, void *info) {
+void AndroidQuakeSoundCallback(AudioTrack::event_type event, void* user, void *info) {
 
     if (event != AudioTrack::EVENT_MORE_DATA) return;
 
