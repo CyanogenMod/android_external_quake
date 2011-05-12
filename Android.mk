@@ -91,11 +91,14 @@ LOCAL_SRC_FILES:= \
   world.cpp \
   zone.cpp
 
+LOCAL_C_INCLUDES:= \
+	system/media/wilhelm/include
+
 LOCAL_SHARED_LIBRARIES := \
 	libutils \
-	libmedia \
 	libEGL \
-	libGLESv1_CM
+	libGLESv1_CM \
+	libOpenSLES
 
 LOCAL_MODULE := libquake
 
