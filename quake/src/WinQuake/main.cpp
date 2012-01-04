@@ -63,7 +63,7 @@ void PMP_Common(const char* fmt, va_list ap, char type)
 				startTimes[startTimeStackPointer] = time;
 			}
 #ifdef USE_LOG
-			LOGI("< %lld [%d] %s\n", time, startTimeStackPointer, buf);
+			ALOGI("< %lld [%d] %s\n", time, startTimeStackPointer, buf);
 #else
 			fprintf(stderr, "Quake < %lld %d %s\n", time, startTimeStackPointer, buf);
 #endif
@@ -82,7 +82,7 @@ void PMP_Common(const char* fmt, va_list ap, char type)
 				}
 			}
 #ifdef USE_LOG
-			LOGI("> %lld [%d] %lld %s\n", time, startTimeStackPointer, elapsed, buf);
+			ALOGI("> %lld [%d] %lld %s\n", time, startTimeStackPointer, elapsed, buf);
 #else
 			fprintf(stderr, "Quake > %lld [%d] %lld %s\n", time, startTimeStackPointer, elapsed, buf);
 #endif
@@ -90,7 +90,7 @@ void PMP_Common(const char* fmt, va_list ap, char type)
 		break;
 	default:
 #ifdef USE_LOG
-		LOGI("= %lld %lld %s\n", time, time - lastTime, buf);
+		ALOGI("= %lld %lld %s\n", time, time - lastTime, buf);
 #else
 		fprintf(stderr, "Quake = %lld %s\n", time, buf);
 #endif

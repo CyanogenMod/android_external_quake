@@ -127,7 +127,7 @@ void Sys_Printf (const char *fmt, ...)
   va_end (argptr);
 
   text[sizeof(text)-1] = 0;
-  LOGI("%s", text);
+  ALOGI("%s", text);
 
 #ifdef USE_PMPEVENT
     PMPEVENT(("%s", text));

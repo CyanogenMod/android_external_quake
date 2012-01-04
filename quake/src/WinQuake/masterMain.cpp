@@ -34,7 +34,7 @@ void AndroidQuit();
 
 jboolean
 qinit(JNIEnv *env, jobject thiz) {
-    LOGI("qinit");
+    ALOGI("qinit");
     return AndroidInit() ? JNI_TRUE : JNI_FALSE;
  }
 
@@ -65,7 +65,7 @@ qstep(JNIEnv *env, jobject thiz, jint width, jint height) {
 
 void
 qquit(JNIEnv *env, jobject thiz) {
-    LOGI("qquit");
+    ALOGI("qquit");
     AndroidQuit();
  }
 
