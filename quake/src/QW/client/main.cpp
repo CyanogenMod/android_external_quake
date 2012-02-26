@@ -19,7 +19,8 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include <private/opengles/gl_context.h>
+#include <GLES/gl.h>
+#include <GLES/glext.h>
 #include <GLES/gl.h>
 
 // Delegate to "C" routines to do the rest of the processing.
