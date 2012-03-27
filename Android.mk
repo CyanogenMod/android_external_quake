@@ -91,7 +91,7 @@ LOCAL_SRC_FILES:= \
   zone.cpp
 
 LOCAL_C_INCLUDES:= \
-	system/media/wilhelm/include
+	$(call include-path-for, wilhelm)
 
 LOCAL_SHARED_LIBRARIES := \
 	libutils \
