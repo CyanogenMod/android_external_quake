@@ -631,7 +631,7 @@ qboolean SNDDMA_Init(void)
     BITS_PER_SAMPLE == 16 ? AUDIO_FORMAT_PCM_16_BIT : AUDIO_FORMAT_PCM_8_BIT,      // format (8 or 16)
     (CHANNEL_COUNT > 1) ? AUDIO_CHANNEL_OUT_STEREO : AUDIO_CHANNEL_OUT_MONO,       // channel mask
     0,       // default buffer size
-    (audio_policy_output_flags_t) 0, // AUDIO_POLICY_OUTPUT_FLAG_NONE
+    (audio_output_flags_t) 0, // AUDIO_OUTPUT_FLAG_NONE
     AndroidQuakeSoundCallback, // callback
     0,  // user
     0); // default notification size
