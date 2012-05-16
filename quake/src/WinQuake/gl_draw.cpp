@@ -533,6 +533,8 @@ qpic_t *Draw_PicFromWad (const char *name)
     int		i, j, k;
     int		texnum;
 
+    x = 0;
+    y = 0;
     texnum = Scrap_AllocBlock (p->width, p->height, &x, &y);
     scrap_dirty = true;
     k = 0;
