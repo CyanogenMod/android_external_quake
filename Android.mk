@@ -95,6 +95,7 @@ LOCAL_C_INCLUDES:= \
 
 LOCAL_SHARED_LIBRARIES := \
 	libutils \
+	liblog \
 	libEGL \
 	libGLESv1_CM \
 	libOpenSLES
